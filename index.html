@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axtelix | Premium Store</title>
+    <link rel="icon" type="image/x-icon" href="logo-wp.jpeg">
+
+    <style>
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        header {
+            padding: 40px 20px 10px 20px;
+            text-align: center;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        /* BUSCADOR */
+        .search-wrapper {
+            max-width: 400px;
+            margin: 10px auto;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        #productSearch {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 25px;
+            border: 1px solid #333;
+            background: #1a1a1a;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        #productSearch:focus { border-color: #d4af37; }
+
+        /* ICONO CARRITO FLOTANTE */
+        .cart-icon-fixed {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #d4af37;
+            color: black;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* CATEGORÍAS */
+        .category-title {
+            text-align: center;
+            letter-spacing: 3px;
+            margin-top: 40px;
+            color: #d4af37;
+            text-transform: uppercase;
+            font-size: 1.1em;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto 40px auto;
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            overflow-x: hidden;
+            gap: 20px;
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        /* PRODUCTOS */
+        .product-card {
+            flex: 0 0 calc(33.33% - 20px);
+            min-width: 250px;
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #333;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .product-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .badge-oferta {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ff4d4d;
+            color: white;
+            padding: 5px 12px;
+            font-size: 0.7em;
+            font-weight: bold;
+            border-radius: 20px;
+            z-index: 10;
+        }
+
+        .hidden { display: none !important; }
+
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .price { color: #d4af37; font-size: 1.2em; font-weight: bold; display: block; margin-bottom: 10px; }
+        
+        .old-price {
+            text-decoration: line-through;
+            color: #666;
+            font-size: 0.8em;
+            margin-right: 8px;
+        }
+
+        .btn-add-cart {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #000;
+            font-weight: bold;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-details {
+            background: transparent;
+            color: #888;
+            border: none;
+            text-decoration: underline;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .arrow-btn {
+            position: absolute;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .prev { left: -20px; } .next { right: -20px; }
+
+        /* SECCIÓN DE CONFIANZA */
+        .trust-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px 20px;
+            background: #0f0f0f;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .trust-item { flex: 1; min-width: 200px; padding: 20px; }
+        .trust-item h4 { color: #d4af37; font-size: 0.9em; margin-bottom: 10px; }
+        .trust-item p { color: #888; font-size: 0.8em; }
+
+        /* MODALES */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.95);
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 5% auto;
+            padding: 30px;
+            width: 85%;
+            max-width: 600px;
+            border-radius: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #333;
+            line-height: 1.6;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .btn-whatsapp-cart {
+            background: #25d366;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .legal-link { color: #555; text-decoration: underline; cursor: pointer; font-size: 0.8em; margin: 0 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="cart-icon-fixed" onclick="openModal('cartModal')">
+        🛒 <span id="cart-count">0</span>
+    </div>
+
+    <header>
+        <h1>Axtelix</h1>
+        <p style="font-size: 0.7em; color: #888;">SMART LIFE GEAR</p>
+    </header>
+
+    <div class="search-wrapper">
+        <input type="text" id="productSearch" placeholder="Buscar en el catálogo... 🔍" onkeyup="filterProducts()">
+    </div>
+
+    <h3 class="category-title">Perfumería</h3>
+    <div class="slider-wrapper">
+        <button class="arrow-btn prev" onclick="scrollSlider('container-perfumes', -1)">&#10094;</button>
+        <div class="container" id="container-perfumes"></div>
+        <button class="arrow-btn next" onclick="scrollSlider('container-perfumes', 1)">&#10095;</button>
+    </div>
+
+    <h3 class="category-title">Tecnología</h3>
+    <div class="slider-wrapper">
+        <button class="arrow-btn prev" onclick="scrollSlider('container-tech', -1)">&#10094;</button>
+        <div class="container" id="container-tech"></div>
+        <button class="arrow-btn next" onclick="scrollSlider('container-tech', 1)">&#10095;</button>
+    </div>
+
+    <h3 class="category-title">Calzado</h3>
+    <div class="slider-wrapper">
+        <button class="arrow-btn prev" onclick="scrollSlider('container-shoes', -1)">&#10094;</button>
+        <div class="container" id="container-shoes"></div>
+        <button class="arrow-btn next" onclick="scrollSlider('container-shoes', 1)">&#10095;</button>
+    </div>
+
+    <div class="trust-section">
+        <div class="trust-item">
+            <h4>🚚 ENVÍOS</h4>
+            <p>De 5 a 7 días hábiles a todo México.</p>
+        </div>
+        <div class="trust-item">
+            <h4>💳 PAGOS</h4>
+            <p>Transferencias, Depósitos y Tarjetas vía WhatsApp.</p>
+        </div>
+        <div class="trust-item">
+            <h4>⭐ CONFIANZA</h4>
+            <p>Garantía de entrega y productos de alta calidad.</p>
+        </div>
+        <div class="trust-item">
+            <h4>📱 ATENCIÓN</h4>
+            <p>Soporte de lunes - viernes 9:00AM - 6:00PM vía WhatsApp.</p>
+        </div>
+    </div>
+
+    <footer style="padding: 40px 20px; text-align: center;">
+        <p>
+            <span class="legal-link" onclick="openModal('legalModal')">Términos y Condiciones</span> |
+            <span class="legal-link" onclick="openModal('aboutModal')">Quiénes Somos</span> |
+            <span class="legal-link" onclick="openModal('payModal')">Formas de Pago</span>
+        </p>
+        <p style="font-size: 0.7em; color:#444;">© 2026 AXTELIX STORE</p>
+    </footer>
+
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span style="float:right; cursor:pointer;" onclick="closeModal('cartModal')">✖</span>
+            <h2>Mi Pedido</h2>
+            <div id="cart-items-container"></div>
+            <hr style="border:1px solid #333; margin:15px 0;">
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                <span>Total:</span><span id="cart-total">$0</span>
+            </div>
+            <button class="btn-whatsapp-cart" onclick="sendWhatsApp()">Confirmar por WhatsApp</button>
+        </div>
+    </div>
+
+    <div id="legalModal" class="modal">
+        <div class="modal-content">
+            <span style="float:right; cursor:pointer;" onclick="closeModal('legalModal')">✖</span>
+            <h2>Términos y Condiciones</h2>
+            <p>1. <b>Modelo:</b> Axtelix opera bajo un modelo de Dropshipping. Al comprar, reconoces que somos intermediarios entre proveedores internacionales y tú.<br> 2. <b>Garantía:</b> Solo por defectos de fábrica reportados en 48h despues de recibir el producto.<br>3. <b>Envíos:</b> Tiempo estimado de 5 a 7 días hábiles. Puede extenderse en casos excepcionales.<br>4. <b>Cancelaciones:</b> No se aceptan una vez procesado el envío.<br>5. <b>Precios:</b> Expresados en MXN. Las ofertas que aparecen son por tiempo limitado.<br>6. <b>Facturación:</b> Para facturas fiscales, contactar vía WhatsApp antes de pagar. </p>
+        </div>
+    </div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span style="float:right; cursor:pointer;" onclick="closeModal('aboutModal')">✖</span>
+            <h2>Quiénes Somos</h2>
+            <p>Bienvenido a <b>Axtelix</b>, más que una tienda, somos sus aliados en la búsqueda de la distinción. Nuestra misión es simplificar el acceso a lo extraordinario, seleccionando cuidadosamente cada pieza de nuestra colección de perfumería fina, tecnología de vanguardia y calzado de edición especial. Nos mueve la pasión por los detalles y el compromiso de acompañarle en cada paso de su elección. Creemos que el lujo no solo reside en el producto, sino en la tranquilidad de recibir calidad y una atención impecable. Estamos aquí para servirle y elevar su experiencia de compra a un estándar superior.</p>
+        </div>
+    </div>
+
+    <div id="payModal" class="modal">
+        <div class="modal-content">
+            <span style="float:right; cursor:pointer;" onclick="closeModal('payModal')">✖</span>
+            <h2>Formas de Pago</h2>
+            <p>•<b>PayPal</b><br>• <b>Transferencia Bancaria (SPEI)</b><br>• <b>Depósito en OXXO</b><br>• <b>Pago con Tarjeta</b> (Mercado Pago / Clip)</p>
+        </div>
+    </div>
+
+
+
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span style="float:right; cursor:pointer;" onclick="closeModal('detailsModal')">✖</span>
+            <h2 id="detailName"></h2>
+            <p id="detailInfo"></p>
+        </div>
+    </div>
+
+    <script>
+        // === 1. DECLARAMOS EL CARRITO ===
+        let cart = [];
+
+        // === 2. TU INVENTARIO ===
+        const PERFUMERIA = [
+            { cat: 'perfumes', nombre: 'JPG Elixir', precio: 1299, precioOriginal: 1650, oferta: false, img: 'jpgelixir-wp.jpeg', desc: '125ml. El aroma del momento.' },
+            { cat: 'perfumes', nombre: 'Sauvage Dior', precio: 1099, oferta: false, img: 'sauvageDior-wp.jpeg', desc: '100ml. El clásico infaltable.' },
+            { cat: 'perfumes', nombre: 'Bleu De Chanel', precio: 1299, precioOriginal: 1500, oferta: false, img: 'bleuofchanel-wp.jpeg', desc: '100ml. Elegancia pura.' },
+            { cat: 'perfumes', nombre: 'Versace', precio: 1199, precioOriginal: 1500, oferta: false, img: 'versace1-wp.png', desc: 'Inspirado en la mitología griega.' },
+            { cat: 'perfumes', nombre: 'Stronger With You Absolutely', precio: 1249, precioOriginal: 1500, oferta: false, img: 'stronger1-wp.png', desc: 'El poder del amor absoluto.' },
+            { cat: 'perfumes', nombre: 'JPG Scandal Le Parfum', precio: 1199, precioOriginal: 1500, oferta: false, img: 'scandal-wp.png', desc: 'Para el hombre que destaca.' },
+            { cat: 'perfumes', nombre: '9PM Rebel', precio: 949, precioOriginal: 1500, oferta: false, img: '9pmrebel-wp.png', desc: 'La opción perfecta para la noche.' },
+            { cat: 'perfumes', nombre: 'JPG Le Male Elixir', precio: 1299, precioOriginal: 1500, oferta: false, img: 'lemale-wp.jpeg', desc: 'Versión intensa del clásico.' },
+            { cat: 'perfumes', nombre: 'Valentino Born In Roma Rockstud', precio: 1199, precioOriginal: 1500, oferta: false, img: 'valentino1-wp.jpeg', desc: 'Fragancia oscura y aromática.' },
+            { cat: 'perfumes', nombre: 'Bad Boy Le Parfum', precio: 1150, oferta: false, img: 'badboy-wp.jpeg', desc: '100ml. Electrizante.' }
+        ];
+
+        const TECNOLOGIA = [
+            { cat: 'tech', nombre: 'Iphone 17 Pro', precio: 8999, precioOriginal: 16000, oferta: true, img: 'iphone17-wp.jpeg', desc: '256GB Titanium.' },
+            { cat: 'tech', nombre: 'Airpods Pro 2G', precio: 899, precioOriginal: 1200, oferta: false, img: 'airpods-wp.jpeg', desc: 'Cancelación de ruido.' },
+            { cat: 'tech', nombre: 'PROXIMAMENTE', precio: 2499, oferta: false, img: '-wp.jpeg', desc: 'PROXIMAMENTE.' }
+        ];
+
+        const CALZADO = [
+            { cat: 'shoes', nombre: 'Nike Dunk Low', precio: 790, precioOriginal: 1200, oferta: true, img: 'nike-wp.jpeg', desc: 'Calidad Garantizada. Tallas 23-29 MX.' },
+            { cat: 'shoes', nombre: 'PROXIMAMENTE', precio: 850, oferta: false, img: '-wp.jpeg', desc: 'PROXIMAMENTE.' },
+            { cat: 'shoes', nombre: 'PROXIMAMENTE', precio: 1100, precioOriginal: 1500, oferta: false, img: '-wp.jpeg', desc: 'PROXIMAMENTE.' }
+        ];
+
+        const INVENTARIO = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO];
+
+        // === 3. FUNCIONES DE RENDER Y SCROLL ===
+        function renderizarProductos() {
+            const contenedores = {
+                perfumes: document.getElementById('container-perfumes'),
+                tech: document.getElementById('container-tech'),
+                shoes: document.getElementById('container-shoes')
+            };
+
+            Object.values(contenedores).forEach(c => { if(c) c.innerHTML = ''; });
+
+            INVENTARIO.forEach(p => {
+                const badge = p.oferta ? `<div class="badge-oferta">OFERTA 🔥</div>` : '';
+                const precioHTML = p.oferta 
+                    ? `<span class="price"><small class="old-price">$${p.precioOriginal}</small>$${p.precio}</span>`
+                    : `<span class="price">$${p.precio}</span>`;
+
+                const html = `
+                    <div class="product-card">
+                        ${badge}
+                        <h3>${p.nombre}</h3>
+                        ${precioHTML}
+                        <img src="${p.img}" onclick="showProductDetails('${p.nombre}', '${p.desc}')">
+                        <button class="btn-details" onclick="showProductDetails('${p.nombre}', '${p.desc}')">Detalles</button>
+                        <button class="btn-add-cart" onclick="addToCart('${p.nombre}', ${p.precio})">Añadir al carrito</button>
+                    </div>
+                `;
+                if (contenedores[p.cat]) contenedores[p.cat].innerHTML += html;
+            });
+        }
+
+        // FUNCIÓN DE GIRO SUAVE (MODIFICADA PARA QUE SEA SMOOTH Y NO RECIO)
+        function scrollSlider(id, direction) {
+            const container = document.getElementById(id);
+            const scrollAmount = 320 * direction; // Distancia a recorrer
+            const start = container.scrollLeft;
+            const target = start + scrollAmount;
+            const duration = 600; // Milisegundos que dura el movimiento (más alto = más lento/suave)
+            let startTime = null;
+
+            function animation(currentTime) {
+                if (startTime === null) startTime = currentTime;
+                const timeElapsed = currentTime - startTime;
+                
+                // Función de aceleración suave (EaseInOutQuad)
+                const progress = Math.min(timeElapsed / duration, 1);
+                const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                
+                container.scrollLeft = start + (scrollAmount * ease);
+
+                if (timeElapsed < duration) {
+                    requestAnimationFrame(animation);
+                }
+            }
+            requestAnimationFrame(animation);
+        }
+
+        // === 4. FUNCIONES DEL CARRITO ===
+        function addToCart(name, price) {
+            cart.push({name, price});
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total');
+            container.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                total += item.price;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.name}</span>
+                        <span>$${item.price} 
+                            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:red; cursor:pointer; margin-left:10px;">✕</button>
+                        </span>
+                    </div>`;
+            });
+            totalEl.innerText = `$${total}`;
+        }
+
+        function removeFromCart(index) { 
+            cart.splice(index, 1); 
+            updateCartUI(); 
+        }
+
+        function sendWhatsApp() {
+            if(cart.length === 0) return alert("El carrito está vacío");
+            let msg = "¡Hola Axtelix! Deseo comprar:%0A";
+            cart.forEach(item => msg += `- ${item.name} ($${item.price})%0A`);
+            msg += `%0ATotal: ${document.getElementById('cart-total').innerText}%0A%0A¿Me podrían proporcionar los métodos de pago?`;
+            window.open(`https://wa.me/523751182621?text=${msg}`);
+        }
+
+        // === 5. UTILIDADES ===
+        function filterProducts() {
+            const input = document.getElementById('productSearch').value.toLowerCase();
+            const cards = document.getElementsByClassName('product-card');
+            for (let card of cards) {
+                const title = card.getElementsByTagName('h3')[0].innerText.toLowerCase();
+                card.classList.toggle('hidden', !title.includes(input));
+            }
+        }
+
+        function showProductDetails(name, info) {
+            document.getElementById('detailName').innerText = name;
+            document.getElementById('detailInfo').innerText = info;
+            openModal('detailsModal');
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = "block"; }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
+        
+        window.onclick = function(e) { 
+            if(e.target.className === 'modal') e.target.style.display = "none"; 
+        }
+
+        window.onload = renderizarProductos;
+    </script>
+</body>
+</html>
