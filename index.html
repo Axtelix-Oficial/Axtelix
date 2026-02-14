@@ -243,6 +243,36 @@
         }
 
         .legal-link { color: #555; text-decoration: underline; cursor: pointer; font-size: 0.8em; margin: 0 10px; }
+
+        /* ESTILOS CUPON */
+        .cupon-wrapper {
+            margin: 15px 0;
+            padding: 10px;
+            background: #222;
+            border-radius: 8px;
+            border: 1px dashed #444;
+        }
+        .cupon-input-group {
+            display: flex;
+            gap: 10px;
+        }
+        #input-cupon {
+            flex: 1;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background: #000;
+            color: white;
+        }
+        .btn-cupon {
+            background: #d4af37;
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -314,6 +344,17 @@
             <span style="float:right; cursor:pointer;" onclick="closeModal('cartModal')">✖</span>
             <h2>Mi Pedido</h2>
             <div id="cart-items-container"></div>
+            
+            <div class="cupon-wrapper">
+                <p style="font-size: 0.8em; margin-bottom: 5px; color: #aaa;">¿Tienes un cupón?</p>
+                <div class="cupon-input-group">
+                    <input type="text" id="input-cupon" placeholder="Código">
+                    <button class="btn-cupon" onclick="aplicarCupon()">Canjear</button>
+                </div>
+                <p id="mensaje-cupon" style="font-size: 0.7em; margin-top: 5px;"></p>
+                <p style="font-size: 0.70em; margin-bottom: 5px; color: #aaa;">NOTA IMPORTANTE: Para garantizar la validez de tu descuento, los cupones se reportan en tiempo real a nuestra base de datos. Si acabas de ingresar a la página, por favor espera 30 segundos antes de aplicar tu código para permitir que el sistema de validación se sincronice correctamente. Sin reporte al instante, el descuento no podrá ser procesado.</p>
+            </div>
+
             <hr style="border:1px solid #333; margin:15px 0;">
             <div style="display:flex; justify-content:space-between; font-weight:bold;">
                 <span>Total:</span><span id="cart-total">$0</span>
@@ -346,8 +387,6 @@
         </div>
     </div>
 
-
-
     <div id="detailsModal" class="modal">
         <div class="modal-content">
             <span style="float:right; cursor:pointer;" onclick="closeModal('detailsModal')">✖</span>
@@ -357,8 +396,9 @@
     </div>
 
     <script>
-        // === 1. DECLARAMOS EL CARRITO ===
+        // === 1. DECLARAMOS EL CARRITO Y DESCUENTO ===
         let cart = [];
+        let descuentoAplicado = 0;
 
         // === 2. TU INVENTARIO ===
         const PERFUMERIA = [
@@ -377,7 +417,7 @@
         const TECNOLOGIA = [
             { cat: 'tech', nombre: 'Iphone 17 Pro', precio: 14999, precioOriginal: 23499, oferta: true, img: 'iphone17-wp.jpeg', desc: '256GB Titanium.' },
             { cat: 'tech', nombre: 'Airpods Pro 2G', precio: 899, precioOriginal: 1200, oferta: false, img: 'airpods-wp.jpeg', desc: 'Cancelación de ruido.' },
-            { cat: 'tech', nombre: 'PROXIMAMENTE', precio: 0, oferta: false, img: '-wp.jpeg', desc: 'PROXIMAMENTE.' }
+            { cat: 'tech', nombre: 'Cargador Inalámbrico MagSafe Pro', precio: 449, oferta: false, img: 'cargador-wp.png', desc: 'Optimiza la carga de tu iPhone con la tecnología MagSafe de Axtelix.' }
         ];
 
         const CALZADO = [
@@ -418,33 +458,25 @@
             });
         }
 
-        // FUNCIÓN DE GIRO SUAVE (MODIFICADA PARA QUE SEA SMOOTH Y NO RECIO)
         function scrollSlider(id, direction) {
             const container = document.getElementById(id);
-            const scrollAmount = 320 * direction; // Distancia a recorrer
+            const scrollAmount = 320 * direction;
             const start = container.scrollLeft;
-            const target = start + scrollAmount;
-            const duration = 600; // Milisegundos que dura el movimiento (más alto = más lento/suave)
+            const duration = 1050;
             let startTime = null;
 
             function animation(currentTime) {
                 if (startTime === null) startTime = currentTime;
                 const timeElapsed = currentTime - startTime;
-                
-                // Función de aceleración suave (EaseInOutQuad)
                 const progress = Math.min(timeElapsed / duration, 1);
                 const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-                
                 container.scrollLeft = start + (scrollAmount * ease);
-
-                if (timeElapsed < duration) {
-                    requestAnimationFrame(animation);
-                }
+                if (timeElapsed < duration) requestAnimationFrame(animation);
             }
             requestAnimationFrame(animation);
         }
 
-        // === 4. FUNCIONES DEL CARRITO ===
+        // === 4. FUNCIONES DEL CARRITO Y CUPONES ===
         function addToCart(name, price) {
             cart.push({name, price});
             updateCartUI();
@@ -455,10 +487,10 @@
             const container = document.getElementById('cart-items-container');
             const totalEl = document.getElementById('cart-total');
             container.innerHTML = '';
-            let total = 0;
+            let subtotal = 0;
             
             cart.forEach((item, index) => {
-                total += item.price;
+                subtotal += item.price;
                 container.innerHTML += `
                     <div class="cart-item">
                         <span>${item.name}</span>
@@ -467,7 +499,47 @@
                         </span>
                     </div>`;
             });
-            totalEl.innerText = `$${total}`;
+
+            let finalTotal = subtotal - descuentoAplicado;
+            if(finalTotal < 0) finalTotal = 0;
+            
+            totalEl.innerHTML = descuentoAplicado > 0 
+                ? `<small style="color:red; text-decoration:line-through;">$${subtotal}</small> $${finalTotal}`
+                : `$${subtotal}`;
+        }
+
+        async function aplicarCupon() {
+            const input = document.getElementById('input-cupon').value.trim().toUpperCase();
+            const mensaje = document.getElementById('mensaje-cupon');
+
+            if (!input) return;
+
+            mensaje.style.color = "white";
+            mensaje.innerText = "Validando...";
+
+            try {
+                const respuesta = await fetch('https://axtelix-backend.onrender.com/validar-cupon', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ codigo: input })
+                });
+
+                const data = await respuesta.json();
+
+                if (data.valido) {
+                    descuentoAplicado = data.descuento;
+                    mensaje.style.color = "#25d366";
+                    mensaje.innerText = `¡Cupón Aplicado! -$${descuentoAplicado} MXN`;
+                    updateCartUI();
+                } else {
+                    mensaje.style.color = "red";
+                    mensaje.innerText = data.mensaje;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                mensaje.style.color = "orange";
+                mensaje.innerText = "Error: El servidor central no responde.";
+            }
         }
 
         function removeFromCart(index) { 
@@ -477,9 +549,24 @@
 
         function sendWhatsApp() {
             if(cart.length === 0) return alert("El carrito está vacío");
+            
             let msg = "¡Hola Axtelix! Deseo comprar:%0A";
-            cart.forEach(item => msg += `- ${item.name} ($${item.price})%0A`);
-            msg += `%0ATotal: ${document.getElementById('cart-total').innerText}%0A%0A¿Me podrían proporcionar los métodos de pago?`;
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                msg += `- ${item.name} ($${item.price})%0A`;
+                subtotal += item.price;
+            });
+            
+            let totalFinal = subtotal - descuentoAplicado;
+            if(totalFinal < 0) totalFinal = 0;
+
+            if(descuentoAplicado > 0) {
+                msg += `%0A📉 DESCUENTO APLICADO: -$${descuentoAplicado}%0A`;
+            }
+            
+            msg += `%0ATotal Final: $${totalFinal}%0A%0A¿Me podrían proporcionar los métodos de pago?`;
+            
             window.open(`https://wa.me/527206181781?text=${msg}`);
         }
 
