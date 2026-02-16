@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Axtelix | Premium Store</title>
     <link rel="icon" type="image/x-icon" href="logo-wp.jpeg">
 
@@ -18,6 +18,21 @@
             overflow-x: hidden;
             overflow-y: auto;
         }
+
+        #social-proof {
+    position: fixed;
+    bottom: 20px;
+    left: -300px; /* Escondido al inicio */
+    background: rgba(20, 20, 20, 0.9);
+    border-left: 4px solid #d4af37;
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    z-index: 9999;
+    transition: left 0.5s ease-in-out;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
 
         /* Estado Agotado */
         .product-card.sold-out {
@@ -246,6 +261,56 @@
             100% { transform: scale(1); }
         }
 
+
+        @media (max-width: 768px) {
+    .container {
+        overflow-x: auto; 
+        /* 'mandatory' obliga a que el scroll se detenga en un producto sí o sí */
+        scroll-snap-type: x mandatory; 
+        -webkit-overflow-scrolling: touch; 
+        gap: 15px;
+        padding: 10px;
+        /* IMPORTANTE: El contenedor debe tener el scroll oculto si usas flechas, 
+           o auto si quieres que usen el dedo */
+    }
+
+    .product-card {
+        flex: 0 0 85%; 
+        scroll-snap-align: center; 
+        /* ESTA ES LA LÍNEA QUE TE FALTA: */
+        scroll-snap-stop: always; 
+        
+        transform: skewX(0deg); 
+        height: auto; /* Para que no se estire raro en móvil */
+    }
+    
+    .arrow-btn {
+        display: none; /* En móvil es mejor usar el dedo, pero si las dejas, 
+                          el JS que te pasé antes hará el salto exacto */
+    }
+}
+
+
+/* Esto hace que el efecto funcione con el mouse Y TAMBIÉN con la clase .active */
+
+/* El Borde Dorado */
+.product-card.active::before, 
+.product-card:hover::before {
+    clip-path: inset(0 0 0 0) !important;
+}
+
+/* La Imagen (Color y brillo) */
+.product-card.active img,
+.product-card:hover img {
+    filter: grayscale(0%) brightness(100%) !important;
+}
+
+/* El texto o botón (si quieres que cambie) */
+.product-card.active .btn-add-cart {
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+
         .slider-wrapper {
             position: relative;
             width: 90%;
@@ -409,6 +474,40 @@
             transition: all 0.2s;
         }
 
+
+        .estrella-ambiente {
+    position: absolute;
+    pointer-events: none; /* Para que no interfieran con los clics */
+    z-index: -1; /* Detrás de todo */
+    opacity: 0;
+    color: #FFD700; /* Color dorado brillante para las estrellas */
+    font-size: 1.5rem; /* Tamaño inicial */
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.7); /* Brillo alrededor */
+    transition: opacity 2s ease-in-out, transform 2s ease-in-out;
+    user-select: none;
+    line-height: 1; /* Para que no ocupe mucho espacio vertical */
+}
+
+/* Animación de una estrella que aparece, flota y se desvanece */
+@keyframes estrellaFlotante {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.5) rotate(0deg);
+    }
+    30% {
+        opacity: 0.7; /* Se ve más al inicio */
+    }
+    70% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--float-x), var(--float-y)) scale(1.5) rotate(360deg);
+    }
+}
+
+
+
         .btn-add-cart:active {
             transform: scale(0.95);
             background-color: #d4af37;
@@ -424,21 +523,56 @@
             margin-bottom: 10px;
         }
 
-        .arrow-btn {
-            position: absolute;
-            background: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-        .prev { left: -20px; } .next { right: -20px; }
+        /* 1. Animación de parpadeo que NUNCA se detiene */
+@keyframes breathing {
+    0%, 100% {
+        opacity: 0.2;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05); /* Un pulso muy sutil */
+    }
+}
+
+.arrow-btn {
+    background: transparent;
+    color: #d4af37;
+    border: none;
+    font-size: 4.5rem; /* Un poco más grandes como pediste */
+    font-weight: 100;
+    cursor: pointer;
+    z-index: 100;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    
+    /* La animación se mantiene SIEMPRE activa */
+    animation: breathing 2.5s infinite ease-in-out;
+    
+    /* Transición suave para cuando le piques */
+    transition: transform 0.1s ease, color 0.1s ease;
+}
+
+/* 2. EFECTO DE HUNDIDO (Cuando le picas) */
+/* El !important asegura que le gane a la animación de parpadeo por un momento */
+.arrow-btn:active {
+    transform: scale(0.85) !important; /* Se hace pequeña (se hunde) */
+    color: #fff !important; /* Destello blanco al presionar */
+    opacity: 1 !important;
+}
+
+/* 3. Evitamos que el hover detenga la animación */
+.arrow-btn:hover {
+    /* Quitamos el play-state: paused para que siga parpadeando mientras decides */
+    color: #d4af37; 
+}
+
+/* Posicionamiento */
+.arrow-btn.prev { left: -5px; }
+.arrow-btn.next { right: -5px; }
 
         .trust-section {
             display: flex;
@@ -546,6 +680,7 @@
             cursor: pointer;
             transition: 0.3s;
         }
+        
     </style>
 </head>
 <body>
@@ -746,15 +881,17 @@
     const badgeAgotado = p.agotado ? `<div class="badge-agotado">SOLD OUT</div>` : '';
     const badgeOferta = p.oferta && !p.agotado ? `<div class="badge-oferta">OFERTA 🔥</div>` : '';
     
+    
     // Si está agotado, el botón dirá "SIN STOCK"
     const textoBoton = p.agotado ? "SIN STOCK" : "AÑADIR AL CARRITO";
+    const precioTachado = p.oferta ? `<span style="text-decoration: line-through; color: #888; font-size: 0.8rem; display: block;">$${p.precioOriginal}</span>` : '';
 
     const html = `
         <div class="product-card ${esAgotado}">
             ${badgeOferta}
             ${badgeAgotado}
             <h3>${p.nombre}</h3>
-            <span class="price">$${p.precio}</span>
+            <span class="price">${precioTachado} $${p.precio}</span>
             <img src="${p.img}" onclick="showProductDetails('${p.nombre}', '${p.desc}')">
             <button class="btn-details" onclick="showProductDetails('${p.nombre}', '${p.desc}')">Detalles</button>
             <button class="btn-add-cart" onclick="addToCart('${p.nombre}', ${p.precio}, this)" ${p.agotado ? 'disabled' : ''}>
@@ -763,6 +900,7 @@
         </div>
     `;
     if (contenedores[p.cat]) contenedores[p.cat].innerHTML += html;
+    setTimeout(activarSensores, 500);
 });
         }
 
@@ -781,22 +919,33 @@
         }
 
         function scrollSlider(id, direction) {
-            const container = document.getElementById(id);
-            const scrollAmount = 320 * direction;
-            const start = container.scrollLeft;
-            const duration = 1450;
-            let startTime = null;
+    const container = document.getElementById(id);
+    const scrollAmount = 320 * direction;
+    
+    // Si la pantalla es pequeña (celular), que sea instantáneo
+    if (window.innerWidth <= 768) {
+        container.scrollBy({
+            left: scrollAmount,
+            behavior: 'auto' // 'auto' es instantáneo, sin esperas ni trabas
+        });
+        return; // Salimos de la función para que no intente hacer lo lento
+    }
 
-            function animation(currentTime) {
-                if (startTime === null) startTime = currentTime;
-                const timeElapsed = currentTime - startTime;
-                const progress = Math.min(timeElapsed / duration, 1);
-                const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-                container.scrollLeft = start + (scrollAmount * ease);
-                if (timeElapsed < duration) requestAnimationFrame(animation);
-            }
-            requestAnimationFrame(animation);
-        }
+    // --- Si es PC, sigue con tu animación suave de siempre ---
+    const start = container.scrollLeft;
+    const duration = 1300; // Aquí puedes dejarlo en 1300 o lo que prefieras para PC
+    let startTime = null;
+
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        container.scrollLeft = start + (scrollAmount * ease);
+        if (timeElapsed < duration) requestAnimationFrame(animation);
+    }
+    requestAnimationFrame(animation);
+}
 
         function addToCart(name, price, btnElement) {
             cart.push({name, price});
@@ -945,6 +1094,130 @@
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
         window.onclick = function(e) { if(e.target.className === 'modal') e.target.style.display = "none"; }
         window.onload = renderizarProductos;
+
+
+        // Configuramos el "Sensor"
+const observerOptions = {
+    root: null, // usa la pantalla como referencia
+    threshold: 0.7 // el producto debe estar al 70% visible para activarse
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // Cuando el producto entra al centro, brilla
+            entry.target.classList.add('active');
+        } else {
+            // Cuando se sale del centro, se apaga
+            entry.target.classList.remove('active');
+        }
+    });
+}, observerOptions);
+
+// Función para decirle al sensor qué observar
+function activarSensores() {
+    const productos = document.querySelectorAll('.product-card');
+    productos.forEach(p => observer.observe(p));
+}
+
+// Lo ejecutamos después de que se carguen los productos
+// Como tú usas renderizarProductos(), hay que llamarla ahí
+setTimeout(activarSensores, 1000);
+
+
+
+function crearEstrellaAmbiente() {
+    const estrella = document.createElement('span');
+    
+    // 1. Crea tu lista de emojis favoritos aquí
+    const emojis = ['⭐', '⚡']; 
+    
+    // 2. Esta línea elige uno al azar de la lista
+    const emojiRandom = emojis[Math.floor(Math.random() * emojis.length)];
+    
+    estrella.textContent = emojiRandom;
+    estrella.className = 'estrella-ambiente';
+
+    // ... (el resto de tu código de tamaño y posición se queda igual)
+    // 1. Tamaño aleatorio
+    const size = Math.floor(Math.random() * 2) + 1; // 1.5rem, 2.5rem
+    estrella.style.fontSize = `${size}rem`;
+
+    // 2. Posición aleatoria en toda la página
+    const posX = Math.floor(Math.random() * window.innerWidth);
+    const posY = Math.floor(Math.random() * document.body.scrollHeight);
+    
+    estrella.style.left = `${posX}px`;
+    estrella.style.top = `${posY}px`;
+
+    // 3. Dirección de flotación aleatoria para que se muevan a distintos lados
+    const floatX = (Math.random() - 0.5) * 200; // Se mueve de -100px a +100px en X
+    const floatY = (Math.random() - 0.5) * 200; // Se mueve de -100px a +100px en Y
+    estrella.style.setProperty('--float-x', `${floatX}px`);
+    estrella.style.setProperty('--float-y', `${floatY}px`);
+
+    // 4. Aplicar la animación de flotar y desvanecer
+    estrella.style.animation = `estrellaFlotante ${Math.random() * 8 + 5}s forwards`; // Duración entre 5 y 13 segundos
+
+    document.body.appendChild(estrella);
+
+    // 5. Limpiar el HTML después de que la estrella se desvanezca
+    setTimeout(() => {
+        estrella.remove();
+    }, 13000); // Un poco más del máximo de la animación
+}
+
+// Lanza una estrella nueva cada 1.5 segundos (puedes ajustar el tiempo)
+setInterval(crearEstrellaAmbiente, 1500);
+
+function lluviaDeEstrellas() {
+    // Definimos cuántas estrellas queremos que salgan al mismo tiempo
+    // En este caso, saldrán entre 2 y 5 estrellas cada vez
+    const cantidad = Math.floor(Math.random() * 4) + 2; 
+
+    for (let i = 0; i < cantidad; i++) {
+        // Usamos un pequeño delay para que no aparezcan todas exactamente al mismo milisegundo
+        setTimeout(crearEstrellaAmbiente, Math.random() * 500);
+    }
+}
+
+// Ahora llamamos a la "lluvia" cada 2 segundos
+setInterval(lluviaDeEstrellas, 2000);
+
+
+
+document.addEventListener('keydown', function (e) {
+    // Bloquea Ctrl + Plus, Ctrl + Minus y Ctrl + Zero
+    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+        e.preventDefault();
+    }
+});
+
+document.addEventListener('wheel', function (e) {
+    // Bloquea el Ctrl + Rueda del ratón
+    if (e.ctrlKey) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
+const productos = ["Sauvage Dior", "Nike Dunk Low", "Bleu de Chanel", "Versace Eros"];
+const ciudades = ["CDMX", "Monterrey", "Guadalajara", "Cancún", "Querétaro"];
+
+function mostrarNotificacion() {
+    const proof = document.getElementById('social-proof') || document.createElement('div');
+    proof.id = 'social-proof';
+    document.body.appendChild(proof);
+
+    const p = productos[Math.floor(Math.random()*productos.length)];
+    const c = ciudades[Math.floor(Math.random()*ciudades.length)];
+    
+    proof.innerHTML = `🛍️ <b>Alguien en ${c}</b><br>compró un ${p} hace un momento.`;
+    proof.style.left = '20px';
+
+    setTimeout(() => { proof.style.left = '-300px'; }, 5000); // Se esconde tras 5s
+}
+setInterval(mostrarNotificacion, 60000); // Sale cada 15 segundos
+
     </script>
 </body>
 </html>
