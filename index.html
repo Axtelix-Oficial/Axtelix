@@ -274,15 +274,19 @@
            o auto si quieres que usen el dedo */
     }
 
+    @media (max-width: 768px) {
     .product-card {
-        flex: 0 0 85%; 
-        scroll-snap-align: center; 
-        /* ESTA ES LA LÍNEA QUE TE FALTA: */
-        scroll-snap-stop: always; 
+        /* Subimos del 85% al 92% para que ocupe casi toda la pantalla */
+        flex: 0 0 92% !important; 
+        min-width: 92% !important;
         
-        transform: skewX(0deg); 
-        height: auto; /* Para que no se estire raro en móvil */
+        /* Asegúrate de que el margen no las empuje */
+        margin: 0 auto; 
+        
+        scroll-snap-align: center;
+        scroll-snap-stop: always;
     }
+}
     
     .arrow-btn {
         display: none; /* En móvil es mejor usar el dedo, pero si las dejas, 
