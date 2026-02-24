@@ -814,10 +814,220 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        
+
+
+        /* Pantalla de carga AXTELIX */
+#loader-axtelix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #0a0a0a; /* Fondo minimalista oscuro */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease;
+}
+
+.letras-contenedor {
+    display: flex;
+    gap: 10px;
+}
+
+.letra {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    animation: jugar 1.5s infinite alternate;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+#loader-axtelix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000; /* Prioridad máxima */
+    overflow: hidden;
+}
+
+/* OCULTAR BOTÓN DE WSP EXTERNO MIENTRAS CARGA */
+.joinchat, .whatsapp-button, [class*="whatsapp"] {
+    display: none !important;
+}
+
+/* --- FONDO DE METEORITOS --- */
+.fondo-espacial {
+    position: absolute;
+    width: 100%; height: 100%;
+    z-index: 1;
+}
+
+.meteorito {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 3px; height: 3px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #00d4ff, 0 0 30px #00d4ff;
+    opacity: 0;
+    animation: lluvia-meteoritos var(--duracion) infinite linear var(--retraso);
+}
+
+@keyframes lluvia-meteoritos {
+    0% { transform: rotate(var(--angulo)) translateX(0) scaleX(1); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: rotate(var(--angulo)) translateX(1200px) scaleX(30); opacity: 0; }
+}
+
+/* --- CONTENIDO CENTRAL --- */
+.letras-contenedor {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 250px;
+}
+
+.logo-central {
+    width: 180px;
+    height: auto;
+    mix-blend-mode: screen; 
+    filter: brightness(1.2) contrast(1.4) drop-shadow(0 0 30px rgba(0, 212, 255, 0.8));
+    -webkit-mask-image: radial-gradient(circle, black 45%, transparent 80%);
+    mask-image: radial-gradient(circle, black 45%, transparent 80%);
+    animation: giro-motor 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.letra {
+    position: absolute;
+    font-size: 5rem;
+    font-weight: 800;
+    color: #fff;
+    opacity: 0;
+    animation: disparo-con-flash 4s infinite;
+}
+
+@keyframes disparo-con-flash {
+    0% { transform: translateX(0) scale(0.3); opacity: 0; color: #00d4ff; filter: blur(20px); }
+    10% { opacity: 1; color: #fff; text-shadow: 0 0 20px #fff, 0 0 50px #00d4ff; }
+    85% { opacity: 1; transform: var(--destino) scale(1); }
+    100% { opacity: 0; transform: var(--destino) scale(0.8); }
+}
+
+/* --- TEXTOS Y CARGA --- */
+.lema-axtelix {
+    margin-top: 20px;
+    color: #00d4ff;
+    letter-spacing: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    z-index: 10;
+}
+
+.carga-contenedor {
+    margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.texto-cargando {
+    color: #00d4ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    animation: parpadeo-texto 1.5s infinite;
+}
+
+.barra-fondo {
+    width: 220px;
+    height: 5px;
+    background: rgba(0, 212, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.barra-progreso {
+    width: 0%;
+    height: 100%;
+    background: #00d4ff;
+    box-shadow: 0 0 15px #00d4ff;
+    animation: progreso-sincro 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes progreso-sincro {
+    0% { width: 0%; background: #00d4ff; }
+    80% { width: 100%; background: #00d4ff; }
+    85% { width: 100%; background: #fff; box-shadow: 0 0 25px #fff; }
+    100% { width: 100%; opacity: 0; }
+}
+
+@keyframes giro-motor {
+    0%, 100% { transform: rotate(0deg) scale(1.1); }
+    50% { transform: rotate(360deg) scale(1.1); }
+}
+
+@keyframes parpadeo-texto {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* MÓVIL */
+@media (max-width: 600px) {
+    .logo-central { width: 110px; }
+    .letra { font-size: 2.5rem; }
+    .letra-a { --destino: translateX(-140px) !important; }
+    .letra-x { --destino: translateX(-100px) !important; }
+    .letra-t { --destino: translateX(-60px) !important; }
+    .letra-l { --destino: translateX(60px) !important; }
+    .letra-i { --destino: translateX(100px) !important; }
+    .letra-x2 { --destino: translateX(140px) !important; }
+    .barra-fondo { width: 150px; }
+}     
     </style>
 </head>
 <body>
+
+    <div id="loader-axtelix">
+    <div class="fondo-espacial">
+        <div class="meteorito" style="--angulo: 20deg; --duracion: 1.2s; --retraso: 0s;"></div>
+        <div class="meteorito" style="--angulo: 110deg; --duracion: 1.5s; --retraso: 0.3s;"></div>
+        <div class="meteorito" style="--angulo: 210deg; --duracion: 1.1s; --retraso: 0.6s;"></div>
+        <div class="meteorito" style="--angulo: 300deg; --duracion: 1.8s; --retraso: 0.2s;"></div>
+        <div class="meteorito" style="--angulo: 55deg; --duracion: 1.4s; --retraso: 0.5s;"></div>
+    </div>
+
+    <div class="letras-contenedor">
+        <span class="letra letra-a" style="--destino: translateX(-320px); animation-delay: 0.9s;">A</span>
+        <span class="letra letra-x" style="--destino: translateX(-230px); animation-delay: 0.6s;">X</span>
+        <span class="letra letra-t" style="--destino: translateX(-140px); animation-delay: 0.3s;">T</span>
+        <img src="logo2-wp.jpg" alt="AXTELIX" class="logo-central">
+        <span class="letra letra-l" style="--destino: translateX(140px); animation-delay: 0.3s;">L</span>
+        <span class="letra letra-i" style="--destino: translateX(230px); animation-delay: 0.6s;">I</span>
+        <span class="letra letra-x2" style="--destino: translateX(320px); animation-delay: 0.9s;">X</span>
+    </div>
+
+    <p class="lema-axtelix">Smart Life Gear</p>
+
+    <div class="carga-contenedor">
+        <span class="texto-cargando">CARGANDO SISTEMA...</span>
+        <div class="barra-fondo"><div class="barra-progreso"></div></div>
+    </div>
+</div>
+
+
 
     <div class="cart-icon-fixed" id="cart-icon" onclick="openModal('cartModal')">
         🛒 <span id="cart-count">0</span>
@@ -1690,6 +1900,94 @@ setInterval(() => {
     });
 }, 500);
 
+
+// =======================================================
+// CONEXIÓN DINÁMICA CON GOOGLE SHEETS + PRELOADER AXTELIX
+// =======================================================
+const URL_SINCRO = "https://axtelix-backend.onrender.com/obtener-inventario";
+
+async function actualizarInventarioReal() {
+    console.log("Iniciando sincronización con la nube...");
+    const loader = document.getElementById('loader-axtelix');
+    const letras = document.querySelectorAll('.letra');
+    const wspBtn = document.querySelector('.joinchat, .whatsapp-button, [class*="whatsapp"]');
+
+    // Ocultar WhatsApp mientras carga
+    if (wspBtn) wspBtn.style.display = 'none';
+
+    try {
+        const respuesta = await fetch(URL_SINCRO);
+        const datosNuevos = await respuesta.json();
+
+        if (datosNuevos && datosNuevos.length > 0) {
+            // 1. Limpiamos las listas actuales
+            PERFUMERIA.length = 0;
+            TECNOLOGIA.length = 0;
+            CALZADO.length = 0;
+            SOFTWARE.length = 0;
+
+            // 2. Repartimos cada producto del Excel a su categoría
+            datosNuevos.forEach(p => {
+                const catExcel = p.Categoria ? p.Categoria.toLowerCase() : '';
+                const productoFormateado = {
+                    nombre: p.Producto,
+                    precio: parseFloat(p.Precio_Venta),
+                    img: p.Imagen_URL,
+                    desc: p.Descripcion,
+                    stock: p.Stock,
+                    cat: p.Categoria
+                };
+
+                if (catExcel.includes('perfume')) PERFUMERIA.push(productoFormateado);
+                else if (catExcel.includes('tecnolog')) TECNOLOGIA.push(productoFormateado);
+                else if (catExcel.includes('calzado') || catExcel.includes('shoes')) CALZADO.push(productoFormateado);
+                else if (catExcel.includes('soft') || catExcel.includes('web')) SOFTWARE.push(productoFormateado);
+            });
+
+            // 3. Actualizamos la lista global y dibujamos la tienda
+            productos = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO, ...SOFTWARE];
+            if (typeof renderizarProductos === "function") renderizarProductos(); 
+            
+            console.log("✅ ¡Tienda sincronizada! Alineando letras...");
+
+            // --- EFECTO VISUAL FINAL ---
+            // Las letras dejan de jugar y se alinean fijas
+            letras.forEach(l => {
+                l.style.animation = "none"; // Detenemos el disparo
+                l.style.opacity = "1";
+                l.style.filter = "blur(0)";
+                l.style.transform = l.style.getPropertyValue('--destino'); // Se clavan en su sitio
+                l.style.textShadow = "0 0 20px #00d4ff, 0 0 40px #fff"; // Brillo de éxito
+            });
+            
+            // Esperamos un segundo para que el usuario aprecie el nombre alineado
+            setTimeout(() => {
+                loader.style.transition = 'opacity 0.8s ease, filter 0.8s ease';
+                loader.style.opacity = '0';
+                loader.style.filter = 'blur(20px)';
+                
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    // Mostramos el WhatsApp con estilo suave
+                    if (wspBtn) {
+                        wspBtn.style.display = 'block';
+                        wspBtn.style.opacity = '0';
+                        wspBtn.style.transition = 'opacity 1s ease';
+                        setTimeout(() => { wspBtn.style.opacity = '1'; }, 100);
+                    }
+                }, 800);
+            }, 1200);
+        }
+    } catch (error) {
+        console.warn("⚠️ Error de conexión. Saltando preloader.");
+        loader.style.display = 'none';
+        if (wspBtn) wspBtn.style.display = 'block';
+    }
+}
+
+// Ejecutar al cargar la ventana
+window.addEventListener('load', actualizarInventarioReal);
+// =======================================================
 
     </script>
     <a href="https://wa.me/527206181781?text=Hola%20Axtelix,%20Me%20Gustaria%20Mas%20Informacion%20Acerca%20De%20Los%20Productos%20Que%20Tienen%20Disponibles%20Actualmente" 
