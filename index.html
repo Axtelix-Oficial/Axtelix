@@ -1207,7 +1207,7 @@
         let descuentoAplicado = 0;
 
         const PERFUMERIA = [
-            { cat: 'perfumes', nombre: 'JPG Elixir', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'jpgelixir-wp.jpeg', desc: '125ml. El aroma del momento.' },
+            { cat: 'perfumes', nombre: 'JPG Elixir', precio: 1399, precioOriginal: 1650, oferta: false, agotado: false, img: 'jpgelixir-wp.jpeg', desc: '125ml. El aroma del momento.' },
             { cat: 'perfumes', nombre: 'Sauvage Dior Elixir', precio: 1099, oferta: false, agotado: false, img: 'sauvageDior-wp.jpeg', desc: '100ml. El clásico infaltable.' },
             { cat: 'perfumes', nombre: 'Bleu De Chanel', precio: 1299, precioOriginal: 1500, oferta: false, agotado: false, img: 'bleuofchanel-wp.jpeg', desc: '100ml. Elegancia pura.' },
             { cat: 'perfumes', nombre: 'Versace', precio: 1199, precioOriginal: 1500, oferta: false, agotado: false, img: 'versace1-wp.png', desc: 'Inspirado en la mitología griega.' },
@@ -1904,6 +1904,7 @@ setInterval(() => {
 // =======================================================
 // CONEXIÓN DINÁMICA CON GOOGLE SHEETS + PRELOADER AXTELIX
 // =======================================================
+// Asegúrate de que esta URL sea la correcta arriba en tu script
 const URL_SINCRO = "https://axtelix-backend.onrender.com/obtener-inventario";
 
 async function actualizarInventarioReal() {
@@ -1915,7 +1916,8 @@ async function actualizarInventarioReal() {
     if (wspBtn) wspBtn.style.display = 'none';
 
     try {
-        const respuesta = await fetch(URL_SINCRO);
+        // Añadimos un timestamp para saltar el caché del navegador
+        const respuesta = await fetch(URL_SINCRO + "?v=" + Date.now());
         const datosNuevos = await respuesta.json();
 
         if (datosNuevos && datosNuevos.length > 0) {
