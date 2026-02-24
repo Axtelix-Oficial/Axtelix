@@ -1912,27 +1912,25 @@ async function actualizarInventarioReal() {
     const letras = document.querySelectorAll('.letra');
     const wspBtn = document.querySelector('.joinchat, .whatsapp-button, [class*="whatsapp"]');
 
-    // Ocultar WhatsApp mientras carga
     if (wspBtn) wspBtn.style.display = 'none';
 
     try {
-        // Llamada a tu Python en Render
         const respuesta = await fetch(URL_SINCRO);
         const datosNuevos = await respuesta.json();
 
         if (datosNuevos && datosNuevos.length > 0) {
-            // 1. Limpiamos las listas actuales (Vaciamos para que entren los 1200 del Excel)
+            // 1. Limpiamos las listas actuales
             PERFUMERIA = []; 
             TECNOLOGIA = []; 
             CALZADO = []; 
             SOFTWARE = [];
 
-            // 2. Repartimos cada producto del Excel a su categoría
+            // 2. Repartimos cada producto del Excel
             datosNuevos.forEach(p => {
                 const catExcel = p.Categoria ? p.Categoria.toLowerCase().trim() : '';
                 const productoFormateado = {
                     nombre: p.Producto,
-                    precio: parseFloat(p.Precio_Venta), // Aquí entran los 1200 o los tenis de 790
+                    precio: parseFloat(p.Precio_Venta), 
                     img: p.Imagen_URL,
                     desc: p.Descripcion,
                     stock: p.Stock,
@@ -1945,17 +1943,17 @@ async function actualizarInventarioReal() {
                 else if (catExcel.includes('soft') || catExcel.includes('web')) SOFTWARE.push(productoFormateado);
             });
 
-            // 3. Actualizamos la lista global y dibujamos la tienda
+            // 3. Actualizamos la lista global
             productos = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO, ...SOFTWARE];
             
-            // Renderizamos los productos nuevos en el HTML
-            if (typeof renderizarProductos === "function") {
-                renderizarProductos(); 
+            // 4. USAMOS EL NOMBRE CORRECTO: mostrarProductos
+            if (typeof mostrarProductos === "function") {
+                mostrarProductos('todos'); 
             }
             
             console.log("✅ ¡Tienda sincronizada! Alineando letras...");
 
-            // --- EFECTO VISUAL FINAL (Tus animaciones) ---
+            // --- EFECTO VISUAL FINAL ---
             letras.forEach(l => {
                 l.style.animation = "none";
                 l.style.opacity = "1";
@@ -1989,7 +1987,6 @@ async function actualizarInventarioReal() {
     }
 }
 
-// Ejecutar al cargar la ventana
 window.addEventListener('load', actualizarInventarioReal);
 // =======================================================
 
