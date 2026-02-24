@@ -1916,22 +1916,23 @@ async function actualizarInventarioReal() {
     if (wspBtn) wspBtn.style.display = 'none';
 
     try {
+        // Llamada a tu Python en Render
         const respuesta = await fetch(URL_SINCRO);
         const datosNuevos = await respuesta.json();
 
         if (datosNuevos && datosNuevos.length > 0) {
-            // 1. Limpiamos las listas actuales
-            PERFUMERIA.length = 0;
-            TECNOLOGIA.length = 0;
-            CALZADO.length = 0;
-            SOFTWARE.length = 0;
+            // 1. Limpiamos las listas actuales (Vaciamos para que entren los 1200 del Excel)
+            PERFUMERIA = []; 
+            TECNOLOGIA = []; 
+            CALZADO = []; 
+            SOFTWARE = [];
 
             // 2. Repartimos cada producto del Excel a su categoría
             datosNuevos.forEach(p => {
-                const catExcel = p.Categoria ? p.Categoria.toLowerCase() : '';
+                const catExcel = p.Categoria ? p.Categoria.toLowerCase().trim() : '';
                 const productoFormateado = {
                     nombre: p.Producto,
-                    precio: parseFloat(p.Precio_Venta),
+                    precio: parseFloat(p.Precio_Venta), // Aquí entran los 1200 o los tenis de 790
                     img: p.Imagen_URL,
                     desc: p.Descripcion,
                     stock: p.Stock,
@@ -1946,41 +1947,44 @@ async function actualizarInventarioReal() {
 
             // 3. Actualizamos la lista global y dibujamos la tienda
             productos = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO, ...SOFTWARE];
-            if (typeof renderizarProductos === "function") renderizarProductos(); 
+            
+            // Renderizamos los productos nuevos en el HTML
+            if (typeof renderizarProductos === "function") {
+                renderizarProductos(); 
+            }
             
             console.log("✅ ¡Tienda sincronizada! Alineando letras...");
 
-            // --- EFECTO VISUAL FINAL ---
-            // Las letras dejan de jugar y se alinean fijas
+            // --- EFECTO VISUAL FINAL (Tus animaciones) ---
             letras.forEach(l => {
-                l.style.animation = "none"; // Detenemos el disparo
+                l.style.animation = "none";
                 l.style.opacity = "1";
                 l.style.filter = "blur(0)";
-                l.style.transform = l.style.getPropertyValue('--destino'); // Se clavan en su sitio
-                l.style.textShadow = "0 0 20px #00d4ff, 0 0 40px #fff"; // Brillo de éxito
+                l.style.transform = l.style.getPropertyValue('--destino');
+                l.style.textShadow = "0 0 20px #00d4ff, 0 0 40px #fff";
             });
             
-            // Esperamos un segundo para que el usuario aprecie el nombre alineado
             setTimeout(() => {
-                loader.style.transition = 'opacity 0.8s ease, filter 0.8s ease';
-                loader.style.opacity = '0';
-                loader.style.filter = 'blur(20px)';
-                
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    // Mostramos el WhatsApp con estilo suave
-                    if (wspBtn) {
-                        wspBtn.style.display = 'block';
-                        wspBtn.style.opacity = '0';
-                        wspBtn.style.transition = 'opacity 1s ease';
-                        setTimeout(() => { wspBtn.style.opacity = '1'; }, 100);
-                    }
-                }, 800);
+                if (loader) {
+                    loader.style.transition = 'opacity 0.8s ease, filter 0.8s ease';
+                    loader.style.opacity = '0';
+                    loader.style.filter = 'blur(20px)';
+                    
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        if (wspBtn) {
+                            wspBtn.style.display = 'block';
+                            wspBtn.style.opacity = '0';
+                            wspBtn.style.transition = 'opacity 1s ease';
+                            setTimeout(() => { wspBtn.style.opacity = '1'; }, 100);
+                        }
+                    }, 800);
+                }
             }, 1200);
         }
     } catch (error) {
-        console.warn("⚠️ Error de conexión. Saltando preloader.");
-        loader.style.display = 'none';
+        console.warn("⚠️ Error de conexión con Render. Saltando al inventario de respaldo.");
+        if (loader) loader.style.display = 'none';
         if (wspBtn) wspBtn.style.display = 'block';
     }
 }
