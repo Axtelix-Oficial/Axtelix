@@ -1771,7 +1771,7 @@ window.pagoDirecto = function(metodo) {
     window.actualizarTodoElSistema();
     
     // Mantenimiento solo para PayPal y Mercado Pago. Transferencia SIEMPRE libre.
-    const mant = { paypal: true, mercado: true, transferencia: false }; 
+    const mant = { paypal: true, mercado: true, transferencia: true }; 
 
     if (mant[metodo] === true) {
         const avisoMant = document.createElement('div');
