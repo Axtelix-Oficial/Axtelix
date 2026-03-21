@@ -1742,6 +1742,7 @@ window.actualizarTodoElSistema = function() {
     }
 };
 
+// --- OBSERVADOR Y INTERVALO ---
 const nodoPrecio = document.getElementById('cart-total');
 if (nodoPrecio) {
     const observador = new MutationObserver(() => {
@@ -1751,7 +1752,6 @@ if (nodoPrecio) {
     });
     observador.observe(nodoPrecio, { childList: true, characterData: true, subtree: true });
 }
-
 setInterval(window.actualizarTodoElSistema, 1000);
 
 window.obtenerSiguienteFolio = function() {
@@ -1761,9 +1761,10 @@ window.obtenerSiguienteFolio = function() {
     return "AXT-" + nuevoFolio;
 };
 
+// --- PAGO DIRECTO Y REGISTRO MYSQL ---
 window.pagoDirecto = function(metodo) {
     window.actualizarTodoElSistema();
-    const mant = { paypal: true, mercado: true, transferencia: true };
+    const mant = { paypal: true, mercado: true, transferencia: false };
 
     if (mant[metodo]) {
         const avisoMant = document.createElement('div');
@@ -1827,19 +1828,46 @@ window.pagoDirecto = function(metodo) {
 
         if(!nom || !dir || !log || tel.length < 10) { alert("⚠️ Completa tus datos."); return; }
         const folioUnico = window.obtenerSiguienteFolio();
-        
-        // Texto legible del método
         const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia Bancaria';
 
-        let botonPago = metodo === 'paypal' ? `<a href="https://paypal.me/AxtelixOficial/${precioNumerico}" target="_blank" style="background:#ffc439; color:#003087; display:block; padding:18px; text-decoration:none; border-radius:15px; font-weight:bold; margin-top:10px;">PAGAR CON PAYPAL</a>` :
-                        metodo === 'mercado' ? `<a href="https://link.mercadopago.com.mx/AxtelixOficial" target="_blank" style="background:#009ee3; color:white; display:block; padding:18px; text-decoration:none; border-radius:15px; font-weight:bold; margin-top:10px;">PAGAR CON MERCADO PAGO</a>` :
-                        `<div style="background:#f4f4f4; padding:15px; border-radius:12px; text-align:left; border:1px solid #ddd; color:#333; font-size:13px;"><b>BANCO AZTECA / BBVA</b><br>CLABE: 000000000000000000</div>`;
+        // --- CONEXIÓN A TU NUEVO SERVIDOR EN INFINITYFREE ---
+        fetch('https://axtelix-ventas.page.gd/registrar.php', {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                folio: folioUnico,
+                cliente: nom,
+                whatsapp: tel,
+                direccion: `${dir}, ${log}. Ref: ${ref}`,
+                total: parseFloat(precioNumerico) || 0,
+                metodo: metodoTexto,
+                productos: resumenDinamico
+            })
+        }).catch(err => console.log("MySQL Offline"));
 
         const modal = checkoutCapa.querySelector('div');
+        
+        // --- APARTADO PARA DATOS BANCARIOS (Solo si elige transferencia) ---
+        let infoBancaria = "";
+        if (metodo === 'transferencia') {
+            infoBancaria = `
+            <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:15px; padding:15px; margin-bottom:15px; text-align:left; font-size:13px; color:#856404;">
+                <p style="margin:0 0 5px 0;"><b>🏦 Datos para tu depósito:</b></p>
+                <p style="margin:2px 0;"><b>Banco:</b> BanCoppel</p>
+                <p style="margin:2px 0;"><b>CLABE:</b> 1373 2610 0767 5685 10</p>
+                <p style="margin:2px 0;"><b>Beneficiario:</b>Enrique Villa</p>
+                <p style="margin:5px 0 0 0; font-size:11px;">*Envía captura del comprobante al finalizar.*</p>
+            </div>`;
+        }
+
         modal.innerHTML = `
             <button onclick="document.getElementById('capa-checkout').remove()" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:30px; cursor:pointer; color:#999;">&times;</button>
             <h3 style="color:#111;">Resumen de Pedido</h3>
             <p style="font-size:12px; color:#d4af37; font-weight:bold;">FOLIO: ${folioUnico}</p>
+            
+            ${infoBancaria}
+
             <div id="ticket-visual" style="background:#f9f9f9; border:1px solid #eee; border-radius:15px; padding:15px; text-align:left; font-size:13px; margin-bottom:15px; color:#333; max-height:200px; overflow-y:auto;">
                 <p>👤 <b>Cliente:</b> ${nom}</p>
                 <p>📍 <b>Envío:</b> ${dir}, ${log}</p>
@@ -1848,65 +1876,7 @@ window.pagoDirecto = function(metodo) {
                 <p style="white-space: pre-line;">- ${resumenDinamico}</p>
                 <p style="font-size:16px; color:#d4af37; margin-top:10px;"><b>Total: ${totalExhibido}</b></p>
             </div>
-            ${botonPago}
-            <button id="btn-descargar-img" style="background:white; color:black; width:100%; padding:12px; border:2px solid black; border-radius:12px; font-weight:bold; margin-top:10px; cursor:pointer;">📥 GUARDAR COMPROBANTE (FOTO)</button>
             <button id="btn-wsp" style="background:#25d366; color:white; width:100%; padding:18px; border:none; border-radius:15px; font-weight:bold; margin-top:15px; cursor:pointer;">ENVIAR A WHATSAPP 📲</button>`;
-
-        document.getElementById('btn-descargar-img').onclick = function() {
-            if (typeof html2canvas === 'undefined') { alert("Error: html2canvas no cargó."); return; }
-            const btn = this;
-            btn.innerText = "⌛ GENERANDO...";
-            btn.disabled = true;
-
-            const printElement = document.createElement('div');
-            printElement.style = "position:absolute; left:-9999px; top:0; background:white; color:black; padding:40px; font-family:sans-serif; width:500px;";
-            
-            let filasTabla = listaFinal.map(p => `
-                <tr>
-                    <td style="border-bottom: 1px solid #eee; padding: 10px; text-align: center;">${p.cantidadTotal}</td>
-                    <td style="border-bottom: 1px solid #eee; padding: 10px;">${p.nombreDisplay}</td>
-                    <td style="border-bottom: 1px solid #eee; padding: 10px; text-align: right;">$${(p.precioLimpio * p.cantidadTotal).toFixed(2)}</td>
-                </tr>
-            `).join('');
-
-            printElement.innerHTML = `
-                <div style="border: 4px solid #d4af37; padding: 30px; border-radius: 15px;">
-                    <h1 style="text-align:center; margin:0; font-size:40px;">AXTELIX</h1>
-                    <p style="text-align:center; color:#d4af37; font-weight:bold; margin-bottom:20px;">TICKET DE COMPRA</p>
-                    <p><b>FOLIO:</b> ${folioUnico}</p>
-                    <p><b>FECHA:</b> ${new Date().toLocaleString()}</p>
-                    <p><b>CLIENTE:</b> ${nom}</p>
-                    <p><b>ENVÍO:</b> ${dir}, ${log}</p>
-                    <p><b>MÉTODO DE PAGO:</b> ${metodoTexto}</p>
-                    <table style="width:100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
-                        <thead>
-                            <tr style="background: #f8f8f8;">
-                                <th style="padding: 10px; border-bottom: 2px solid #d4af37;">CANT</th>
-                                <th style="padding: 10px; border-bottom: 2px solid #d4af37; text-align: left;">PRODUCTO</th>
-                                <th style="padding: 10px; border-bottom: 2px solid #d4af37; text-align: right;">PRECIO</th>
-                            </tr>
-                        </thead>
-                        <tbody>${filasTabla}</tbody>
-                    </table>
-                    <h2 style="text-align:right; color:#d4af37;">TOTAL: ${totalExhibido}</h2>
-                    <p style="text-align:center; font-size:12px; margin-top:30px;">Gracias por tu compra en Axtelix Store.</p>
-                </div>`;
-            document.body.appendChild(printElement);
-
-            html2canvas(printElement, { scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Ticket_${folioUnico}.png`;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-                document.body.removeChild(printElement);
-                btn.innerText = "📥 GUARDAR COMPROBANTE (FOTO)";
-                btn.disabled = false;
-            }).catch(e => {
-                console.error(e);
-                btn.innerText = "❌ ERROR";
-                btn.disabled = false;
-            });
-        };
 
         document.getElementById('btn-wsp').onclick = function() {
             const msg = `📦 *AXTELIX SHOP - PEDIDO*\n🆔 *FOLIO:* ${folioUnico}\n\n👤 *Cliente:* ${nom}\n📍 *Dirección:* ${dir}, ${log}\n🏠 *Ref:* ${ref}\n💰 *Total:* ${totalExhibido}\n💳 *Método:* ${metodoTexto}\n\n🛍️ *Items:* \n- ${resumenDinamico}`;
@@ -1916,114 +1886,44 @@ window.pagoDirecto = function(metodo) {
     };
 };
 
-
-// --- DESBLOQUEADOR DE DETALLES AXTELIX ---
-setInterval(() => {
-    // Buscamos todos los elementos que parezcan botones de detalles
-    const botonesDetalles = document.querySelectorAll('.Detalles, a[onclick], button[onclick]');
-    
-    botonesDetalles.forEach(btn => {
-        if (btn.innerText.toLowerCase().includes('detalles')) {
-            // Quitamos cualquier restricción de clics
-            btn.style.pointerEvents = 'auto';
-            btn.style.zIndex = '9999999';
-            
-            // Si el padre tiene pointer-events: none, lo corregimos solo para que deje pasar clics
-            if (btn.parentElement) {
-                btn.parentElement.style.pointerEvents = 'auto';
-            }
-        }
-    });
-}, 500);
-
-
-// =======================================================
-// CONEXIÓN DINÁMICA CON GOOGLE SHEETS + PRELOADER AXTELIX
-// =======================================================
-// Asegúrate de que esta URL sea la correcta arriba en tu script
+// --- SINCRONIZACIÓN CON RENDER ---
 const URL_SINCRO = "https://axtelix-backend.onrender.com/obtener-inventario";
 
 async function actualizarInventarioReal() {
-    console.log("Iniciando sincronización con la nube...");
+    console.log("Iniciando sincronización Axtelix...");
     const loader = document.getElementById('loader-axtelix');
-    const letras = document.querySelectorAll('.letra');
-    const wspBtn = document.querySelector('.joinchat, .whatsapp-button, [class*="whatsapp"]');
-
-    if (wspBtn) wspBtn.style.display = 'none';
+    const wspBtn = document.querySelector('.joinchat, .whatsapp-button');
 
     try {
-        // Añadimos un timestamp para saltar el caché del navegador
         const respuesta = await fetch(URL_SINCRO + "?v=" + Date.now());
         const datosNuevos = await respuesta.json();
 
         if (datosNuevos && datosNuevos.length > 0) {
-            // 1. Limpiamos las listas actuales
-            PERFUMERIA = []; 
-            TECNOLOGIA = []; 
-            CALZADO = []; 
-            SOFTWARE = [];
-
-            // 2. Repartimos cada producto del Excel
+            PERFUMERIA = []; TECNOLOGIA = []; CALZADO = []; SOFTWARE = [];
             datosNuevos.forEach(p => {
                 const catExcel = p.Categoria ? p.Categoria.toLowerCase().trim() : '';
-                const productoFormateado = {
-                    nombre: p.Producto,
-                    precio: parseFloat(p.Precio_Venta), 
-                    img: p.Imagen_URL,
-                    desc: p.Descripcion,
-                    stock: p.Stock,
-                    cat: p.Categoria
-                };
-
-                if (catExcel.includes('perfume')) PERFUMERIA.push(productoFormateado);
-                else if (catExcel.includes('tecnolog')) TECNOLOGIA.push(productoFormateado);
-                else if (catExcel.includes('calzado') || catExcel.includes('shoes')) CALZADO.push(productoFormateado);
-                else if (catExcel.includes('soft') || catExcel.includes('web')) SOFTWARE.push(productoFormateado);
+                const item = { nombre: p.Producto, precio: parseFloat(p.Precio_Venta), img: p.Imagen_URL, desc: p.Descripcion, stock: p.Stock, cat: p.Categoria };
+                if (catExcel.includes('perfume')) PERFUMERIA.push(item);
+                else if (catExcel.includes('tecnolog')) TECNOLOGIA.push(item);
+                else if (catExcel.includes('calzado')) CALZADO.push(item);
+                else SOFTWARE.push(item);
             });
-
-            // 3. Actualizamos la lista global
             productos = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO, ...SOFTWARE];
-            
-            // 4. USAMOS EL NOMBRE CORRECTO: mostrarProductos
-            if (typeof mostrarProductos === "function") {
-                mostrarProductos('todos'); 
-            }
-            
-            console.log("✅ ¡Tienda sincronizada! Alineando letras...");
-
-            // --- EFECTO VISUAL FINAL ---
-            letras.forEach(l => {
-                l.style.animation = "none";
-                l.style.opacity = "1";
-                l.style.filter = "blur(0)";
-                l.style.transform = l.style.getPropertyValue('--destino');
-                l.style.textShadow = "0 0 20px #00d4ff, 0 0 40px #fff";
-            });
-            
-            setTimeout(() => {
-                if (loader) {
-                    loader.style.transition = 'opacity 0.8s ease, filter 0.8s ease';
-                    loader.style.opacity = '0';
-                    loader.style.filter = 'blur(20px)';
-                    
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                        if (wspBtn) {
-                            wspBtn.style.display = 'block';
-                            wspBtn.style.opacity = '0';
-                            wspBtn.style.transition = 'opacity 1s ease';
-                            setTimeout(() => { wspBtn.style.opacity = '1'; }, 100);
-                        }
-                    }, 800);
-                }
-            }, 1200);
+            if (typeof mostrarProductos === "function") mostrarProductos('todos'); 
         }
-    } catch (error) {
-        console.warn("⚠️ Error de conexión con Render. Saltando al inventario de respaldo.");
-        if (loader) loader.style.display = 'none';
-        if (wspBtn) wspBtn.style.display = 'block';
-    }
+    } catch (e) { console.warn("Modo offline."); }
+    
+    if (loader) loader.style.display = 'none';
+    if (wspBtn) wspBtn.style.display = 'block';
 }
+
+// Iniciar carga al abrir
+actualizarInventarioReal();
+
+
+
+
+
 
 window.addEventListener('load', actualizarInventarioReal);
 // =======================================================
