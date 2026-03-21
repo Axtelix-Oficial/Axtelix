@@ -1702,8 +1702,9 @@ setInterval(mostrarNotificacion, 60000); // Sale cada 60 segundos
 // --- 1. SISTEMA DE PRECIOS Y FOLIOS (CON OBSERVADOR ANTIPARPADEO) ---
 // 1. SISTEMA DE PRECIOS Y ACTUALIZACIÓN VISUAL
 // --- CONFIGURACIÓN DE NUBE AXTELIX (SUPABASE) ---
-const SB_URL = 'https://akyuuehbjerawwvvaud.supabase.co'; // Tu URL
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM'; // Tu Key que empieza con eyJ...
+// --- CONFIGURACIÓN DE NUBE AXTELIX (SUPABASE) ---
+const SB_URL = 'https://akyuuehbjrawwvvaud.supabase.co'; 
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM'; 
 
 window.actualizarTodoElSistema = function() {
     const totalDorado = document.getElementById('total-carrito');
@@ -1768,7 +1769,7 @@ window.obtenerSiguienteFolio = function() {
 // --- PROCESO DE PAGO Y REGISTRO EN SUPABASE ---
 window.pagoDirecto = function(metodo) {
     window.actualizarTodoElSistema();
-    const mant = { paypal: true, mercado: true }; // Dejé transferencia libre para que puedas cobrar
+    const mant = { paypal: true, mercado: true }; // Transferencia bancaria ready
 
     if (mant[metodo]) {
         const avisoMant = document.createElement('div');
@@ -1834,7 +1835,7 @@ window.pagoDirecto = function(metodo) {
         const folioUnico = window.obtenerSiguienteFolio();
         const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia Bancaria';
 
-        // --- ENVÍO DIRECTO A SUPABASE (NUEVO) ---
+        // --- ENVÍO DIRECTO A SUPABASE (CORREGIDO: minúsculas y sin acentos) ---
         try {
             await fetch(`${SB_URL}/rest/v1/pedidos`, {
                 method: 'POST',
@@ -1845,13 +1846,13 @@ window.pagoDirecto = function(metodo) {
                     'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
-                    Folio: folioUnico,
-                    Cliente: nom,
-                    Whatsapp: tel,
-                    Dirección: `${dir}, ${log}. Ref: ${ref}`,
-                    Total: parseFloat(precioNumerico) || 0,
-                    Metodo: metodoTexto,
-                    Productos: resumenDinamico
+                    folio: folioUnico,
+                    cliente: nom,
+                    whatsapp: tel,
+                    direccion: `${dir}, ${log}. Ref: ${ref}`,
+                    total: parseFloat(precioNumerico) || 0,
+                    metodo: metodoTexto,
+                    productos: resumenDinamico
                 })
             });
             console.log("¡Registro exitoso en Supabase!");
