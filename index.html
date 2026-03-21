@@ -1701,6 +1701,10 @@ setInterval(mostrarNotificacion, 60000); // Sale cada 60 segundos
 // --- 1. SINCRONIZADOR DE PRECIOS ---
 // --- 1. SISTEMA DE PRECIOS Y FOLIOS (CON OBSERVADOR ANTIPARPADEO) ---
 // 1. SISTEMA DE PRECIOS Y ACTUALIZACIÓN VISUAL
+// --- CONFIGURACIÓN DE NUBE AXTELIX (SUPABASE) ---
+const SB_URL = 'https://akyuuehbjrawwvvaud.supabase.co'; // Tu URL
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM'; // Tu Key que empieza con eyJ...
+
 window.actualizarTodoElSistema = function() {
     const totalDorado = document.getElementById('total-carrito');
     const totalOriginal = document.getElementById('cart-total');
@@ -1743,7 +1747,6 @@ window.actualizarTodoElSistema = function() {
     }
 };
 
-// --- OBSERVADOR Y INTERVALO ---
 const nodoPrecio = document.getElementById('cart-total');
 if (nodoPrecio) {
     const observador = new MutationObserver(() => {
@@ -1755,7 +1758,6 @@ if (nodoPrecio) {
 }
 setInterval(window.actualizarTodoElSistema, 1000);
 
-// 2. GENERADOR DE FOLIOS
 window.obtenerSiguienteFolio = function() {
     let ultimoFolio = localStorage.getItem('ultimo_folio_axtelix') || 100;
     let nuevoFolio = parseInt(ultimoFolio) + 1;
@@ -1763,10 +1765,10 @@ window.obtenerSiguienteFolio = function() {
     return "AXT-" + nuevoFolio;
 };
 
-// 3. PROCESO DE PAGO Y REGISTRO EN BASE DE DATOS
+// --- PROCESO DE PAGO Y REGISTRO EN SUPABASE ---
 window.pagoDirecto = function(metodo) {
     window.actualizarTodoElSistema();
-    const mant = { paypal: true, mercado: true, transferencia: true };
+    const mant = { paypal: true, mercado: true }; // Dejé transferencia libre para que puedas cobrar
 
     if (mant[metodo]) {
         const avisoMant = document.createElement('div');
@@ -1821,7 +1823,7 @@ window.pagoDirecto = function(metodo) {
     </div>`;
     document.body.appendChild(checkoutCapa);
 
-    document.getElementById('btn-next-step').onclick = function() {
+    document.getElementById('btn-next-step').onclick = async function() {
         const nom = document.getElementById('ins-nom').value.trim();
         const dir = document.getElementById('ins-dir').value.trim();
         const log = document.getElementById('ins-logistica').value.trim();
@@ -1832,24 +1834,32 @@ window.pagoDirecto = function(metodo) {
         const folioUnico = window.obtenerSiguienteFolio();
         const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia Bancaria';
 
-        // --- ENVÍO A INFINITYFREE ---
-        fetch('https://axtelix-ventas.page.gd/registrar.php', {
-            method: 'POST',
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                folio: folioUnico,
-                cliente: nom,
-                whatsapp: tel,
-                direccion: `${dir}, ${log}. Ref: ${ref}`,
-                total: parseFloat(precioNumerico) || 0,
-                metodo: metodoTexto,
-                productos: resumenDinamico
-            })
-        }).catch(err => console.log("MySQL Offline"));
+        // --- ENVÍO DIRECTO A SUPABASE (NUEVO) ---
+        try {
+            await fetch(`${SB_URL}/rest/v1/pedidos`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SB_KEY,
+                    'Authorization': `Bearer ${SB_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': 'return=minimal'
+                },
+                body: JSON.stringify({
+                    Folio: folioUnico,
+                    Cliente: nom,
+                    Whatsapp: tel,
+                    Dirección: `${dir}, ${log}. Ref: ${ref}`,
+                    Total: parseFloat(precioNumerico) || 0,
+                    Metodo: metodoTexto,
+                    Productos: resumenDinamico
+                })
+            });
+            console.log("¡Registro exitoso en Supabase!");
+        } catch (err) {
+            console.error("Error guardando en la nube:", err);
+        }
 
         const modal = checkoutCapa.querySelector('div');
-        
         let infoBancaria = "";
         if (metodo === 'transferencia') {
             infoBancaria = `
@@ -1866,9 +1876,7 @@ window.pagoDirecto = function(metodo) {
             <button onclick="document.getElementById('capa-checkout').remove()" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:30px; cursor:pointer; color:#999;">&times;</button>
             <h3 style="color:#111;">Resumen de Pedido</h3>
             <p style="font-size:12px; color:#d4af37; font-weight:bold;">FOLIO: ${folioUnico}</p>
-            
             ${infoBancaria}
-
             <div id="ticket-visual" style="background:#f9f9f9; border:1px solid #eee; border-radius:15px; padding:15px; text-align:left; font-size:13px; margin-bottom:15px; color:#333; max-height:200px; overflow-y:auto;">
                 <p>👤 <b>Cliente:</b> ${nom}</p>
                 <p>📍 <b>Envío:</b> ${dir}, ${log}</p>
@@ -1887,7 +1895,7 @@ window.pagoDirecto = function(metodo) {
     };
 };
 
-// 4. SINCRONIZACIÓN CON RENDER (HOJA DE CÁLCULO)
+// --- SINCRONIZACIÓN CON RENDER ---
 const URL_SINCRO = "https://axtelix-backend.onrender.com/obtener-inventario";
 
 async function actualizarInventarioReal() {
