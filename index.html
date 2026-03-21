@@ -1766,7 +1766,7 @@ window.obtenerSiguienteFolio = function() {
 // 3. PROCESO DE PAGO Y REGISTRO EN BASE DE DATOS
 window.pagoDirecto = function(metodo) {
     window.actualizarTodoElSistema();
-    const mant = { paypal: true, mercado: true, transferencia: false };
+    const mant = { paypal: true, mercado: true, transferencia: true };
 
     if (mant[metodo]) {
         const avisoMant = document.createElement('div');
