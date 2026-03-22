@@ -993,6 +993,263 @@
     .letra-x2 { --destino: translateX(140px) !important; }
     .barra-fondo { width: 150px; }
 }     
+
+/* ==========================================
+   ✨ AXTELIX PREMIUM DESIGN SYSTEM
+   ========================================== */
+:root {
+    --gold-axtelix: #d4af37;
+    --gold-bright: #f1c40f;
+    --dark-bg: #020617;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --accent-blue: #1e293b;
+}
+
+/* --- FONDO PRINCIPAL CON RADIAL GLOW --- */
+#capa-checkout {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, var(--accent-blue) 0%, var(--dark-bg) 100%);
+    z-index: 9999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    animation: fadeInAxt 0.5s ease;
+}
+
+/* --- CONTENEDOR DE CRISTAL (MODAL) --- */
+.modal-container-axt {
+    background: var(--glass-bg);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    width: 100%;
+    max-width: 480px;
+    border-radius: 40px;
+    padding: 35px;
+    position: relative;
+    color: white;
+    text-align: center;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    max-height: 95vh;
+    overflow-y: auto;
+    transition: opacity 0.3s ease;
+}
+
+/* --- BOTÓN CERRAR (X) --- */
+.axt-close-btn {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.05);
+    font-size: 24px;
+    cursor: pointer;
+    color: #94a3b8;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+}
+
+.axt-close-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.4);
+    transform: rotate(180deg) scale(1.1);
+}
+
+/* --- INPUTS PREMIUM --- */
+.input-axt {
+    width: 100%;
+    padding: 18px;
+    margin-bottom: 12px;
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.03);
+    color: white;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.input-axt:focus {
+    border-color: var(--gold-axtelix);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* --- TARJETA LUXURY --- */
+.card-axtelix {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto 25px auto;
+    perspective: 1000px;
+}
+
+.card-front {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #020617 100%);
+    height: 200px;
+    border-radius: 25px;
+    padding: 25px;
+    position: relative;
+    color: white;
+    text-align: left;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+    animation: floatingCard 4s ease-in-out infinite;
+}
+
+/* Efecto de brillo barriendo la tarjeta */
+.card-front::after {
+    content: '';
+    position: absolute;
+    top: -150%;
+    left: -150%;
+    width: 300%;
+    height: 300%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg);
+    animation: lightSweep 6s infinite ease-in-out;
+}
+
+.card-bank-name { font-weight: 800; font-size: 14px; color: var(--gold-axtelix); letter-spacing: 2px; }
+.card-chip-gold {
+    width: 50px; height: 38px;
+    background: linear-gradient(135deg, #d4af37 0%, #f1c40f 100%);
+    border-radius: 8px; margin: 20px 0;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+.card-number-display { font-family: 'Courier New', monospace; font-size: 20px; font-weight: bold; letter-spacing: 2px; }
+.card-holder-area { position: absolute; bottom: 25px; left: 25px; }
+.holder-label { font-size: 9px; opacity: 0.6; }
+.holder-name { font-size: 14px; font-weight: 600; text-transform: uppercase; }
+.card-type-label { position: absolute; bottom: 25px; right: 25px; font-weight: 900; font-style: italic; opacity: 0.8; }
+
+/* --- BOTONES --- */
+.btn-primary-axt {
+    background: linear-gradient(135deg, var(--gold-axtelix) 0%, var(--gold-bright) 100%);
+    color: #000;
+    width: 100%;
+    padding: 22px;
+    border: none;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-primary-axt:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+}
+
+.btn-whatsapp-axt {
+    background: #25d366;
+    color: white;
+    width: 100%;
+    padding: 20px;
+    border: none;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+    transition: 0.3s;
+}
+
+.btn-whatsapp-axt:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 35px rgba(37, 211, 102, 0.5);
+}
+
+/* --- SECCIÓN AYUDA (ACORDEÓN) --- */
+.ayuda-pago-container {
+    margin-top: 20px;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 15px;
+}
+
+.btn-ayuda-link {
+    background: none;
+    border: none;
+    color: var(--gold-axtelix);
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.ayuda-guia-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    text-align: left;
+    margin-top: 12px;
+}
+
+.ayuda-guia-content.show {
+    max-height: 400px;
+}
+
+.paso-pago {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 15px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.paso-pago p { margin: 0; font-size: 12px; color: #cbd5e1; line-height: 1.4; }
+
+/* --- RESUMEN FINAL --- */
+.resumen-final-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px dashed rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* --- ANIMACIONES --- */
+@keyframes fadeInAxt { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
+
+@keyframes lightSweep {
+    0% { transform: translate(-20%, -20%) rotate(45deg); }
+    30%, 100% { transform: translate(100%, 100%) rotate(45deg); }
+}
+
+@keyframes floatingCard {
+    0%, 100% { transform: translateY(0) rotateX(0deg); }
+    50% { transform: translateY(-12px) rotateX(4deg); }
+}
+
+/* --- SCROLLBAR --- */
+.modal-container-axt::-webkit-scrollbar { width: 6px; }
+.modal-container-axt::-webkit-scrollbar-thumb { background: var(--gold-axtelix); border-radius: 10px; }
+
     </style>
 </head>
 <body>
@@ -1698,10 +1955,29 @@ function mostrarNotificacion() {
 setInterval(mostrarNotificacion, 60000); // Sale cada 60 segundos
 
 
-// --- 1. SINCRONIZADOR DE PRECIOS ---
-const SB_URL = 'https://akyuuehbjerawwvvauud.supabase.co'; 
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM'; 
+// ==========================================
+// ⚙️ CONFIGURACIÓN MAESTRA AXTELIX
+// ==========================================
+const CONFIG_SISTEMA = {
+    mantenimiento: {
+        paypal: true,        // true = BLOQUEADO
+        mercadoPago: true,   // true = BLOQUEADO
+        transferencia: false // false = ACTIVO
+    },
+    datosBanco: {
+        nombre: "BanCoppel",
+        clabe: "1373 2610 0767 5685 10",
+        titular: "ENRIQUE VILLA"
+    },
+    supabase: {
+        url: 'https://akyuuehbjerawwvvauud.supabase.co',
+        key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM'
+    }
+};
 
+// ==========================================
+// 1. NÚCLEO DE PRECIOS (SINCRONIZADOR)
+// ==========================================
 window.actualizarTodoElSistema = function() {
     const totalDorado = document.getElementById('total-carrito');
     const totalOriginal = document.getElementById('cart-total');
@@ -1723,27 +1999,21 @@ window.actualizarTodoElSistema = function() {
         if (isNaN(sumaActual) || sumaActual <= 0) sumaActual = sumaBase;
 
         const valorFinal = "$" + sumaActual.toFixed(0);
-        if (totalOriginal.innerText !== valorFinal) {
-            totalOriginal.innerText = valorFinal;
-        }
-
+        if (totalOriginal.innerText !== valorFinal) totalOriginal.innerText = valorFinal;
         if (totalDorado) totalDorado.innerText = "$" + sumaActual.toFixed(2);
         
-        const displaysPago = document.querySelectorAll('.pago-directo-total');
-        displaysPago.forEach(el => el.innerText = "$" + sumaActual.toFixed(2));
+        document.querySelectorAll('.pago-directo-total').forEach(el => el.innerText = "$" + sumaActual.toFixed(2));
 
         if (sumaActual < (sumaBase - 1) && precioViejo) {
             precioViejo.innerText = "$" + sumaBase.toFixed(2);
             precioViejo.style.display = "inline-block";
-            precioViejo.style.marginRight = "8px";
-            precioViejo.style.textDecoration = "line-through";
-            precioViejo.style.color = "red";
         } else if (precioViejo) {
             precioViejo.style.display = "none";
         }
     }
 };
 
+// Observador para cambios en tiempo real
 const nodoPrecio = document.getElementById('cart-total');
 if (nodoPrecio) {
     const observador = new MutationObserver(() => {
@@ -1762,25 +2032,18 @@ window.obtenerSiguienteFolio = function() {
     return "AXT-" + nuevoFolio;
 };
 
-// --- PROCESO DE PAGO Y REGISTRO EN SUPABASE ---
+// ==========================================
+// 2. PROCESO DE PAGO Y CHECKOUT
+// ==========================================
 window.pagoDirecto = function(metodo) {
     window.actualizarTodoElSistema();
     
-    // CORRECCIÓN: transferencia: false para que NO esté en mantenimiento
-    const mant = { paypal: true, mercado: true, transferencia: false }; 
+    const esMant = (metodo === 'paypal' && CONFIG_SISTEMA.mantenimiento.paypal) ||
+                   (metodo === 'mercado' && CONFIG_SISTEMA.mantenimiento.mercadoPago) ||
+                   (metodo === 'transferencia' && CONFIG_SISTEMA.mantenimiento.transferencia);
 
-    if (mant[metodo] === true) {
-        const avisoMant = document.createElement('div');
-        avisoMant.id = "aviso-mantenimiento";
-        avisoMant.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000000; display:flex; justify-content:center; align-items:center; padding:20px;";
-        avisoMant.innerHTML = `
-            <div style="background:white; padding:30px; border-radius:24px; text-align:center; max-width:400px; font-family:sans-serif;">
-                <div style="font-size:50px; margin-bottom:15px;">🛠️</div>
-                <h2 style="color:#111;">Mantenimiento</h2>
-                <p style="color:#666;">El pago por <b>${metodo.toUpperCase()}</b> no está disponible temporalmente.</p>
-                <button onclick="document.getElementById('aviso-mantenimiento').remove()" style="margin-top:20px; background:black; color:white; border:none; padding:12px 30px; border-radius:12px; font-weight:bold; cursor:pointer; width:100%;">ENTENDIDO</button>
-            </div>`;
-        document.body.appendChild(avisoMant);
+    if (esMant) {
+        mostrarAvisoMantenimiento(metodo);
         return;
     }
 
@@ -1788,118 +2051,199 @@ window.pagoDirecto = function(metodo) {
 
     const productosAgrupados = {};
     cart.forEach(p => {
-        const nombre = p.nombre || p.titulo || p.name || p.title || "Producto";
+        const nombre = p.nombre || p.titulo || p.name || "Producto";
         const talla = p.talla ? ` (${p.talla})` : "";
         const idUnico = nombre + talla;
-        const precioUnitario = parseFloat(String(p.precio || p.price).replace(/[$,]/g, '')) || 0;
-        if (productosAgrupados[idUnico]) {
-            productosAgrupados[idUnico].cantidadTotal += (p.cantidad || 1);
-        } else {
-            productosAgrupados[idUnico] = { nombreDisplay: nombre + talla, cantidadTotal: (p.cantidad || 1), precioLimpio: precioUnitario };
-        }
+        productosAgrupados[idUnico] = (productosAgrupados[idUnico] || 0) + (p.cantidad || 1);
     });
-    const listaFinal = Object.values(productosAgrupados);
-
+    
+    const resumenDinamico = Object.entries(productosAgrupados).map(([name, qty]) => `${qty}x ${name}`).join('\n- ');
     let totalExhibido = document.getElementById('total-carrito').innerText;
     const precioNumerico = totalExhibido.replace(/[^\d.]/g, ''); 
-    const resumenDinamico = listaFinal.map(p => `${p.cantidadTotal}x ${p.nombreDisplay}`).join('\n- ');
 
     const checkoutCapa = document.createElement('div');
     checkoutCapa.id = "capa-checkout";
-    checkoutCapa.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999999; display:flex; justify-content:center; align-items:center; padding:15px; box-sizing:border-box; font-family:sans-serif;";
-    
     checkoutCapa.innerHTML = `
-    <div style="background:white; width:100%; max-width:450px; border-radius:24px; padding:25px; position:relative; color:#333; text-align:center; max-height:90vh; overflow-y:auto;">
-        <button onclick="document.getElementById('capa-checkout').remove()" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:30px; cursor:pointer; color:#999;">&times;</button>
-        <h3 style="margin:0; color:#111;">Datos para el Envío</h3>
-        <p style="font-size:14px; color:#555; margin-bottom:15px;">Total: <b style="color:#d4af37;">${totalExhibido}</b></p>
-        <input type="text" id="ins-nom" placeholder="Nombre completo" style="width:100%; padding:14px; margin-bottom:10px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; color:black;">
-        <input type="text" id="ins-dir" placeholder="Calle y Número" style="width:100%; padding:14px; margin-bottom:10px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; color:black;">
-        <input type="text" id="ins-logistica" placeholder="Colonia, CP, Ciudad" style="width:100%; padding:14px; margin-bottom:10px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; color:black;">
-        <input type="tel" id="ins-tel" placeholder="Número de WhatsApp" style="width:100%; padding:14px; margin-bottom:10px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; color:black;">
-        <textarea id="ins-ref" placeholder="Referencias de la casa" style="width:100%; padding:14px; margin-bottom:20px; border:1px solid #ddd; border-radius:12px; font-size:16px; box-sizing:border-box; height:80px; resize:none; color:black;"></textarea>
-        <button id="btn-next-step" style="background:black; color:white; width:100%; padding:18px; border:none; border-radius:15px; font-weight:bold; cursor:pointer;">CONTINUAR</button>
+    <div class="modal-container-axt">
+        <button onclick="document.getElementById('capa-checkout').remove()" class="axt-close-btn">&times;</button>
+        
+        <div class="header-axt">
+            <h2 style="margin:0; font-weight:800; font-size:28px; letter-spacing:-1px;">Finalizar Pedido</h2>
+            <p style="font-size:14px; color:#94a3b8; margin-top:5px;">Pago seguro vía <span style="color:var(--gold-axtelix); font-weight:bold;">${metodo.toUpperCase()}</span></p>
+        </div>
+
+        <div class="form-grid-axt">
+            <input type="text" id="ins-nom" placeholder="Nombre completo" class="input-axt">
+            <input type="text" id="ins-dir" placeholder="Calle y número de casa" class="input-axt">
+            <input type="text" id="ins-logistica" placeholder="Colonia, CP y Estado/Ciudad" class="input-axt">
+            <input type="tel" id="ins-tel" placeholder="WhatsApp (10 dígitos)" class="input-axt">
+            <textarea id="ins-ref" placeholder="Referencias de tu casa (ej. portón café, frente a parque)..." class="input-axt" style="height:80px; resize:none;"></textarea>
+        </div>
+
+        <div class="total-box-axt">
+            <p style="margin:0; font-size:11px; color:var(--gold-axtelix); letter-spacing:2px; font-weight:bold;">TOTAL NETO</p>
+            <p style="margin:5px 0 0 0; font-size:32px; font-weight:900; text-shadow: 0 0 20px rgba(212,175,55,0.3);">${totalExhibido}</p>
+        </div>
+
+        <button id="btn-next-step" class="btn-primary-axt">CONFIRMAR Y CONTINUAR</button>
     </div>`;
     document.body.appendChild(checkoutCapa);
 
     document.getElementById('btn-next-step').onclick = async function() {
-        const nom = document.getElementById('ins-nom').value.trim();
-        const dir = document.getElementById('ins-dir').value.trim();
-        const log = document.getElementById('ins-logistica').value.trim();
-        const tel = document.getElementById('ins-tel').value.trim();
-        const ref = document.getElementById('ins-ref').value.trim();
+        const data = {
+            nom: document.getElementById('ins-nom').value.trim(),
+            dir: document.getElementById('ins-dir').value.trim(),
+            log: document.getElementById('ins-logistica').value.trim(),
+            tel: document.getElementById('ins-tel').value.trim(),
+            ref: document.getElementById('ins-ref').value.trim()
+        };
 
-        if(!nom || !dir || !log || tel.length < 10) { alert("⚠️ Completa tus datos."); return; }
-        const folioUnico = window.obtenerSiguienteFolio();
-        const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia Bancaria';
+        if(!data.nom || !data.dir || !data.log || data.tel.length < 10) { 
+            alert("⚠️ Por favor, llena todos los campos correctamente."); 
+            return; 
+        }
+        
+        const folio = window.obtenerSiguienteFolio();
+        const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia';
 
-        // --- ENVÍO DIRECTO A SUPABASE CON VALIDACIÓN DE ERRORES ---
+        // REGISTRO EN SUPABASE
         try {
-            const respuestaSupa = await fetch(`${SB_URL}/rest/v1/pedidos`, {
+            await fetch(`${CONFIG_SISTEMA.supabase.url}/rest/v1/pedidos`, {
                 method: 'POST',
-                headers: {
-                    'apikey': SB_KEY,
-                    'Authorization': `Bearer ${SB_KEY}`,
+                headers: { 
+                    'apikey': CONFIG_SISTEMA.supabase.key, 
+                    'Authorization': `Bearer ${CONFIG_SISTEMA.supabase.key}`, 
                     'Content-Type': 'application/json',
                     'Prefer': 'return=minimal'
                 },
-                body: JSON.stringify({
-                    Folio: folioUnico,
-                    Cliente: nom,
-                    Whatsapp: tel,
-                    Direccion: `${dir}, ${log}. Ref: ${ref}`, // Sin acento
-                    Total: parseFloat(precioNumerico) || 0,
-                    Metodo: metodoTexto,
-                    Productos: resumenDinamico
+                body: JSON.stringify({ 
+                    Folio: folio, 
+                    Cliente: data.nom, 
+                    Whatsapp: data.tel, 
+                    Direccion: `${data.dir}, ${data.log}. Ref: ${data.ref}`, 
+                    Total: parseFloat(precioNumerico) || 0, 
+                    Metodo: metodoTexto, 
+                    Productos: resumenDinamico 
                 })
             });
+        } catch(e) { console.error(e); }
 
-            if (respuestaSupa.ok) {
-                console.log("✅ ¡Registro exitoso en Supabase!");
-            } else {
-                const errorDetalle = await respuestaSupa.text();
-                console.error("❌ Error Supabase:", errorDetalle);
-                alert("Hubo un detalle subiendo a la base de datos (revisa mayúsculas en las columnas de Supabase): " + errorDetalle);
-            }
-        } catch (err) {
-            console.error("Error guardando en la nube:", err);
-        }
-
-        const modal = checkoutCapa.querySelector('div');
-        let infoBancaria = "";
-        if (metodo === 'transferencia') {
-            infoBancaria = `
-            <div style="background:#fff3cd; border:1px solid #ffeeba; border-radius:15px; padding:15px; margin-bottom:15px; text-align:left; font-size:13px; color:#856404;">
-                <p style="margin:0 0 5px 0;"><b>🏦 Datos para tu depósito:</b></p>
-                <p style="margin:2px 0;"><b>Banco:</b> BanCoppel</p>
-                <p style="margin:2px 0;"><b>CLABE:</b> 1373 2610 0767 5685 10</p>
-                <p style="margin:2px 0;"><b>Beneficiario:</b> Enrique Villa</p>
-                <p style="margin:5px 0 0 0; font-size:11px;">*Envía captura del comprobante al finalizar.*</p>
-            </div>`;
-        }
-
-        modal.innerHTML = `
-            <button onclick="document.getElementById('capa-checkout').remove()" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:30px; cursor:pointer; color:#999;">&times;</button>
-            <h3 style="color:#111;">Resumen de Pedido</h3>
-            <p style="font-size:12px; color:#d4af37; font-weight:bold;">FOLIO: ${folioUnico}</p>
-            ${infoBancaria}
-            <div id="ticket-visual" style="background:#f9f9f9; border:1px solid #eee; border-radius:15px; padding:15px; text-align:left; font-size:13px; margin-bottom:15px; color:#333; max-height:200px; overflow-y:auto;">
-                <p>👤 <b>Cliente:</b> ${nom}</p>
-                <p>📍 <b>Envío:</b> ${dir}, ${log}</p>
-                <p>💳 <b>Pago:</b> ${metodoTexto}</p>
-                <hr style="border:0; border-top:1px dashed #ccc; margin:10px 0;">
-                <p style="white-space: pre-line;">- ${resumenDinamico}</p>
-                <p style="font-size:16px; color:#d4af37; margin-top:10px;"><b>Total: ${totalExhibido}</b></p>
-            </div>
-            <button id="btn-wsp" style="background:#25d366; color:white; width:100%; padding:18px; border:none; border-radius:15px; font-weight:bold; margin-top:15px; cursor:pointer;">ENVIAR A WHATSAPP 📲</button>`;
-
-        document.getElementById('btn-wsp').onclick = function() {
-            const msg = `📦 *AXTELIX SHOP - PEDIDO*\n🆔 *FOLIO:* ${folioUnico}\n\n👤 *Cliente:* ${nom}\n📍 *Dirección:* ${dir}, ${log}\n🏠 *Ref:* ${ref}\n💰 *Total:* ${totalExhibido}\n💳 *Método:* ${metodoTexto}\n\n🛍️ *Items:* \n- ${resumenDinamico}`;
-            window.open(`https://wa.me/527206181781?text=${encodeURIComponent(msg)}`, "_blank");
-            checkoutCapa.remove();
-        };
+        mostrarPasoFinal(checkoutCapa, folio, data, resumenDinamico, totalExhibido, metodo);
     };
 };
+
+// ==========================================
+// 3. UI PASO FINAL (SÚPER LLAMATIVO)
+// ==========================================
+function mostrarPasoFinal(capa, folio, data, resumen, total, metodo) {
+    const modal = capa.querySelector('.modal-container-axt');
+    modal.style.opacity = '0';
+    
+    setTimeout(() => {
+        modal.innerHTML = `
+            <button onclick="document.getElementById('capa-checkout').remove()" class="axt-close-btn">&times;</button>
+            <h2 style="margin-bottom:25px; font-weight:800; font-size:24px;">¡Pedido Registrado!</h2>
+            
+            <div class="card-axtelix" onclick="copiarClabeAxt()" style="cursor:pointer; position:relative;">
+                <div class="card-front">
+                    <div class="card-bank-name">Axtelix Rewards Card</div>
+                    <div class="card-chip-gold"></div>
+                    <div class="card-number-display">${CONFIG_SISTEMA.datosBanco.clabe}</div>
+                    <div class="card-holder-area">
+                        <div class="holder-label">BENEFICIARIO</div>
+                        <div class="holder-name">${CONFIG_SISTEMA.datosBanco.titular}</div>
+                    </div>
+                    <div class="card-type-label">${CONFIG_SISTEMA.datosBanco.nombre}</div>
+                </div>
+                <div style="margin-top:10px; font-size:10px; color:var(--gold-axtelix); font-weight:bold; letter-spacing:1px;">
+                    👆 Toca la tarjeta para copiar la CLABE
+                </div>
+            </div>
+
+            <div class="resumen-final-box">
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:8px; margin-bottom:8px;">
+                    <span style="color:var(--gold-axtelix); font-weight:bold;">FOLIO:</span>
+                    <span>${folio}</span>
+                </div>
+                <p style="font-size:12px; opacity:0.7; line-height:1.4; white-space: pre-line;">${resumen}</p>
+                <div style="margin-top:10px; text-align:right;">
+                    <span style="font-size:20px; font-weight:900; color:var(--gold-axtelix);">${total}</span>
+                </div>
+            </div>
+
+            <button id="btn-wsp" class="btn-whatsapp-axt">
+                ENVIAR COMPROBANTE POR WHATSAPP 📲
+            </button>
+            
+            <p style="font-size:11px; margin-top:15px; color:#94a3b8; line-height:1.4;">
+                ✨ <b>Tu pedido será habilitado</b> y se te hará llegar el número de guía en cuanto se libere el pago. ¡Gracias por tu preferencia!
+            </p>
+
+            <div class="ayuda-pago-container">
+                <button onclick="toggleAyudaAxt()" class="btn-ayuda-link">¿No sabes cómo funciona?</button>
+                <div id="ayuda-guia" class="ayuda-guia-content">
+                    <div class="paso-pago">
+                        <span>1️⃣</span> <p>Copia la CLABE tocando la tarjeta negra de arriba.</p>
+                    </div>
+                    <div class="paso-pago">
+                        <span>2️⃣</span> <p>Entra a tu App de banco y transfiere los <b>${total}</b>.</p>
+                    </div>
+                    <div class="paso-pago">
+                        <span>3️⃣</span> <p>Toma captura de pantalla y envíala por WhatsApp.</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        modal.style.opacity = '1';
+
+        document.getElementById('btn-wsp').onclick = function() {
+            const msg = `📦 *AXTELIX SHOP - NUEVO PEDIDO*\n` +
+                        `-----------------------------------\n` +
+                        `🆔 *FOLIO:* ${folio}\n` +
+                        `👤 *Cliente:* ${data.nom}\n` +
+                        `📍 *Dirección:* ${data.dir}, ${data.log}\n` +
+                        `💰 *Total a pagar:* ${total}\n` +
+                        `💳 *Método:* ${metodo.toUpperCase()}\n\n` +
+                        `🛍️ *Productos:* \n- ${resumen}\n\n` +
+                        `*Adjunto comprobante de pago a continuación.*`;
+            
+            window.open(`https://wa.me/527206181781?text=${encodeURIComponent(msg)}`, "_blank");
+            capa.remove();
+        };
+    }, 300);
+}
+
+// ==========================================
+// 4. FUNCIONES DE INTERACCIÓN
+// ==========================================
+window.toggleAyudaAxt = function() {
+    const content = document.getElementById('ayuda-guia');
+    content.classList.toggle('show');
+};
+
+window.copiarClabeAxt = function() {
+    const clabeLimpia = CONFIG_SISTEMA.datosBanco.clabe.replace(/\s/g, '');
+    navigator.clipboard.writeText(clabeLimpia).then(() => {
+        const aviso = document.createElement('div');
+        aviso.style = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--gold-axtelix); color:black; padding:10px 20px; border-radius:10px; font-weight:bold; z-index:100000000; font-size:12px; animation: fadeInAxt 0.3s;";
+        aviso.innerText = "✅ CLABE Copiada";
+        document.body.appendChild(aviso);
+        setTimeout(() => aviso.remove(), 2000);
+    });
+};
+
+function mostrarAvisoMantenimiento(metodo) {
+    const aviso = document.createElement('div');
+    aviso.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); backdrop-filter:blur(15px); z-index:10000001; display:flex; justify-content:center; align-items:center; padding:20px;";
+    aviso.innerHTML = `
+        <div style="background:white; padding:40px; border-radius:30px; text-align:center; max-width:400px; color:black; font-family:sans-serif;">
+            <div style="font-size:60px; margin-bottom:15px;">🛠️</div>
+            <h2 style="margin:0;">Mantenimiento</h2>
+            <p style="color:#666; margin-top:10px;">El sistema de pagos por <b>${metodo.toUpperCase()}</b> se encuentra en actualización. Por favor selecciona <b>Otro Método</b>.</p>
+            <button onclick="this.parentElement.parentElement.remove()" style="margin-top:25px; background:black; color:white; border:none; padding:18px; border-radius:15px; width:100%; cursor:pointer; font-weight:bold; font-size:16px;">ENTENDIDO</button>
+        </div>`;
+    document.body.appendChild(aviso);
+}
 
 // --- SINCRONIZACIÓN CON RENDER ---
 const URL_SINCRO = "https://axtelix-backend.onrender.com/obtener-inventario";
