@@ -2026,7 +2026,7 @@ if (nodoPrecio) {
 setInterval(window.actualizarTodoElSistema, 1000);
 
 window.obtenerSiguienteFolio = function() {
-    let ultimoFolio = localStorage.getItem('ultimo_folio_axtelix') || 100;
+    let ultimoFolio = localStorage.getItem('ultimo_folio_axtelix') || 0;
     let nuevoFolio = parseInt(ultimoFolio) + 1;
     localStorage.setItem('ultimo_folio_axtelix', nuevoFolio);
     return "AXT-" + nuevoFolio;
@@ -2106,7 +2106,6 @@ window.pagoDirecto = function(metodo) {
         const folio = window.obtenerSiguienteFolio();
         const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia';
 
-        // REGISTRO EN SUPABASE
         try {
             await fetch(`${CONFIG_SISTEMA.supabase.url}/rest/v1/pedidos`, {
                 method: 'POST',
@@ -2133,7 +2132,7 @@ window.pagoDirecto = function(metodo) {
 };
 
 // ==========================================
-// 3. UI PASO FINAL (SÚPER LLAMATIVO)
+// 3. UI PASO FINAL
 // ==========================================
 function mostrarPasoFinal(capa, folio, data, resumen, total, metodo) {
     const modal = capa.querySelector('.modal-container-axt');
@@ -2176,21 +2175,15 @@ function mostrarPasoFinal(capa, folio, data, resumen, total, metodo) {
             </button>
             
             <p style="font-size:11px; margin-top:15px; color:#94a3b8; line-height:1.4;">
-                ✨ <b>Tu pedido será habilitado</b> y se te hará llegar el número de guía en cuanto se libere el pago. ¡Gracias por tu preferencia!
+                ✨ <b>Tu pedido será habilitado</b> y se te hará llegar el número de guía en cuanto se libere el pago.
             </p>
 
             <div class="ayuda-pago-container">
                 <button onclick="toggleAyudaAxt()" class="btn-ayuda-link">¿No sabes cómo funciona?</button>
                 <div id="ayuda-guia" class="ayuda-guia-content">
-                    <div class="paso-pago">
-                        <span>1️⃣</span> <p>Copia la CLABE tocando la tarjeta negra de arriba.</p>
-                    </div>
-                    <div class="paso-pago">
-                        <span>2️⃣</span> <p>Entra a tu App de banco y transfiere los <b>${total}</b>.</p>
-                    </div>
-                    <div class="paso-pago">
-                        <span>3️⃣</span> <p>Toma captura de pantalla y envíala por WhatsApp.</p>
-                    </div>
+                    <div class="paso-pago"><span>1️⃣</span> <p>Copia la CLABE tocando la tarjeta negra.</p></div>
+                    <div class="paso-pago"><span>2️⃣</span> <p>Transfiere <b>${total}</b> desde tu App de banco.</p></div>
+                    <div class="paso-pago"><span>3️⃣</span> <p>Envía la captura por WhatsApp.</p></div>
                 </div>
             </div>
         `;
@@ -2198,15 +2191,12 @@ function mostrarPasoFinal(capa, folio, data, resumen, total, metodo) {
 
         document.getElementById('btn-wsp').onclick = function() {
             const msg = `📦 *AXTELIX SHOP - NUEVO PEDIDO*\n` +
-                        `-----------------------------------\n` +
                         `🆔 *FOLIO:* ${folio}\n` +
                         `👤 *Cliente:* ${data.nom}\n` +
-                        `📍 *Dirección:* ${data.dir}, ${data.log}\n` +
-                        `💰 *Total a pagar:* ${total}\n` +
+                        `💰 *Total:* ${total}\n` +
                         `💳 *Método:* ${metodo.toUpperCase()}\n\n` +
                         `🛍️ *Productos:* \n- ${resumen}\n\n` +
-                        `*Adjunto comprobante de pago a continuación.*`;
-            
+                        `*Adjunto comprobante.*`;
             window.open(`https://wa.me/527206181781?text=${encodeURIComponent(msg)}`, "_blank");
             capa.remove();
         };
@@ -2234,12 +2224,12 @@ window.copiarClabeAxt = function() {
 
 function mostrarAvisoMantenimiento(metodo) {
     const aviso = document.createElement('div');
-    aviso.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); backdrop-filter:blur(15px); z-index:10000001; display:flex; justify-content:center; align-items:center; padding:20px;";
+    aviso.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); z-index:10000001; display:flex; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;";
     aviso.innerHTML = `
-        <div style="background:white; padding:40px; border-radius:30px; text-align:center; max-width:400px; color:black; font-family:sans-serif;">
+        <div style="background:white; padding:40px 30px; border-radius:30px; text-align:center; max-width:400px; width:100%; color:black; font-family:sans-serif; box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
             <div style="font-size:60px; margin-bottom:15px;">🛠️</div>
-            <h2 style="margin:0;">Mantenimiento</h2>
-            <p style="color:#666; margin-top:10px;">El sistema de pagos por <b>${metodo.toUpperCase()}</b> se encuentra en actualización. Por favor selecciona <b>Otro Método</b>.</p>
+            <h2 style="margin:0; font-size:24px; font-weight:800;">Mantenimiento</h2>
+            <p style="color:#64748b; margin-top:15px; font-size:15px; line-height:1.5;">El sistema de pagos por <b>${metodo.toUpperCase()}</b> se encuentra en actualización. Por favor selecciona <b>Otro Método</b>.</p>
             <button onclick="this.parentElement.parentElement.remove()" style="margin-top:25px; background:black; color:white; border:none; padding:18px; border-radius:15px; width:100%; cursor:pointer; font-weight:bold; font-size:16px;">ENTENDIDO</button>
         </div>`;
     document.body.appendChild(aviso);
