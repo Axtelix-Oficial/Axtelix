@@ -1699,11 +1699,7 @@ setInterval(mostrarNotificacion, 60000); // Sale cada 60 segundos
 
 
 // --- 1. SINCRONIZADOR DE PRECIOS ---
-// --- 1. SISTEMA DE PRECIOS Y FOLIOS (CON OBSERVADOR ANTIPARPADEO) ---
-// 1. SISTEMA DE PRECIOS Y ACTUALIZACIÓN VISUAL
-// --- CONFIGURACIÓN DE NUBE AXTELIX (SUPABASE) ---
-// --- CONFIGURACIÓN DE NUBE AXTELIX (SUPABASE) ---
-const SB_URL = 'https://akyuuehbjrawwvvaud.supabase.co'; 
+const SB_URL = 'https://akyuuehbjerawwvvauud.supabase.co'; 
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM'; 
 
 window.actualizarTodoElSistema = function() {
@@ -1770,8 +1766,8 @@ window.obtenerSiguienteFolio = function() {
 window.pagoDirecto = function(metodo) {
     window.actualizarTodoElSistema();
     
-    // Mantenimiento solo para PayPal y Mercado Pago. Transferencia SIEMPRE libre.
-    const mant = { paypal: true, mercado: true, transferencia: true }; 
+    // CORRECCIÓN: transferencia: false para que NO esté en mantenimiento
+    const mant = { paypal: true, mercado: true, transferencia: false }; 
 
     if (mant[metodo] === true) {
         const avisoMant = document.createElement('div');
@@ -1837,9 +1833,9 @@ window.pagoDirecto = function(metodo) {
         const folioUnico = window.obtenerSiguienteFolio();
         const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia Bancaria';
 
-        // --- ENVÍO DIRECTO A SUPABASE (CAMPOS EN MINÚSCULAS) ---
+        // --- ENVÍO DIRECTO A SUPABASE CON VALIDACIÓN DE ERRORES ---
         try {
-            await fetch(`${SB_URL}/rest/v1/pedidos`, {
+            const respuestaSupa = await fetch(`${SB_URL}/rest/v1/pedidos`, {
                 method: 'POST',
                 headers: {
                     'apikey': SB_KEY,
@@ -1848,16 +1844,23 @@ window.pagoDirecto = function(metodo) {
                     'Prefer': 'return=minimal'
                 },
                 body: JSON.stringify({
-                    folio: folioUnico,
-                    cliente: nom,
-                    whatsapp: tel,
-                    direccion: `${dir}, ${log}. Ref: ${ref}`,
-                    total: parseFloat(precioNumerico) || 0,
-                    metodo: metodoTexto,
-                    productos: resumenDinamico
+                    Folio: folioUnico,
+                    Cliente: nom,
+                    Whatsapp: tel,
+                    Direccion: `${dir}, ${log}. Ref: ${ref}`, // Sin acento
+                    Total: parseFloat(precioNumerico) || 0,
+                    Metodo: metodoTexto,
+                    Productos: resumenDinamico
                 })
             });
-            console.log("¡Registro exitoso en Supabase!");
+
+            if (respuestaSupa.ok) {
+                console.log("✅ ¡Registro exitoso en Supabase!");
+            } else {
+                const errorDetalle = await respuestaSupa.text();
+                console.error("❌ Error Supabase:", errorDetalle);
+                alert("Hubo un detalle subiendo a la base de datos (revisa mayúsculas en las columnas de Supabase): " + errorDetalle);
+            }
         } catch (err) {
             console.error("Error guardando en la nube:", err);
         }
