@@ -2714,7 +2714,7 @@ textarea.axt-input-field { resize: none; line-height: 1.5; }
             { cat: 'perfumes', nombre: 'Dior Sauvage Eau de Toilette', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'diorEDT-wp.jpg', desc: 'Frescura eléctrica y directa. Su nota de bergamota de Calabria es reconocida por su energía. Un básico esencial para proyectar una imagen limpia.' },
             { cat: 'perfumes', nombre: 'JPG Divine (Eau de Parfum)', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'jpgDIVINE-wp.jpg', desc: 'La nueva joya de Gaultier. Una fragancia que rompe esquemas con notas solares y un toque salino. Innovación magnética para el estilo de vida actual.' },
             { cat: 'perfumes', nombre: 'Prada Luna Rossa Ocean (Eau de Parfum)', precio: 1300, precioOriginal: 1650, oferta: false, agotado: false, img: 'pradaocean-wp.jpg', desc: 'Sofisticación azul reinventada. El iris y la lavanda aportan una sensación de limpieza extrema. El aroma del hombre dinámico que valora la pulcritud tecnológica.' },
-            { cat: 'perfumes', nombre: 'Armaf Club de Nuit Iconic (Eau de Parfum)', precio: 750, precioOriginal: 1650, oferta: false, agotado: false, img: 'iconic-wp.jpg', desc: 'Potencia y frescura en un solo frasco. Conocido por su gran proyección, es la opción "todo terreno" para quien busca que su presencia se note desde que entra.' },
+            { cat: 'perfumes', nombre: 'Armaf Club de Nuit Iconic (Eau de Parfum)', precio: 750, precioOriginal: 1650, oferta: false, agotado: false, img: 'iconic-wp.jpg', desc: 'Potencia y frescura en un solo frasco. Conocido por su gran proyección, es la opción todo terreno para quien busca que su presencia se note desde que entra.' },
             { cat: 'perfumes', nombre: 'Carolina Herrera Good Girl - Eau de Parfum', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'carolinaH-wp.jpg', desc: 'Una fragancia icónica que destaca por su elegancia y sofisticación. Good Girl combina notas florales de jazmín y nardo con un toque cálido de cacao y haba tonka. Su diseño en forma de tacón azul medianoche es un símbolo de estilo a nivel mundial. Ideal para uso nocturno o eventos especiales. Presentación de 80ml.' },
             { cat: 'perfumes', nombre: 'Carolina Herrera Good Girl Légere - Eau de Parfum', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'carolinaHxir-wp.jpg', desc: 'Una versión más luminosa y fresca del icónico tacón. Good Girl Légere destaca por su equilibrio perfecto entre el dulce del dulce de leche y la frescura del jazmín y el ylang-ylang. Es una fragancia sofisticada, ideal para el uso diario o eventos de día, que mantiene la elegancia característica de la línea. Presentación de 80ml con frasco en degradado azul.' },
             { cat: 'perfumes', nombre: 'Bond No. 9 Greenwich Village - Eau de Parfum', precio: 1850, precioOriginal: 1650, oferta: false, agotado: false, img: 'greenwich-wp.jpg', desc: 'La esencia de la sofisticación neoyorquina. Greenwich Village es una fragancia cautivadora que equilibra la frescura del lichi y la mandarina con la dulzura del praliné y el toque moderno del ambroxan. Un aroma ligero, elegante y con una fijación excepcional, ideal para quien busca una firma olfativa única y refrescante. Presentación premium de 100ml.' },
@@ -3184,26 +3184,26 @@ const CONFIG_SISTEMA = {
     },
 
     // 🔗 LINK DE PAGO DIRECTO PAYPAL
-    linkPayPal: "https://www.paypal.com/qrcodes/tu-link-aqui", // <-- PON TU LINK AQUÍ
+    linkPayPal: "https://www.paypal.com/qrcodes/tu-link-aqui",
 
     // 💳 DATOS TARJETA 1 (MERCADO PAGO)
     datosMercadoPago: {
         nombre: "Mercado Pago",
-        numero: "5256 7890 1234 5678", // Pon espacios cada 4 números para el diseño
+        numero: "5256 7890 1234 5678",
         titular: "LUIS VILLA"
     },
 
     // 💳 DATOS TARJETA 2 (TRANSFERENCIA BANCARIA)
     datosBanco: {
         nombre: "BanCoppel",
-        clabe: "1373 2610 0767 5685 10", // Pon espacios para el diseño
+        clabe: "1373 2610 0767 5685 10",
         titular: "ENRIQUE VILLA"
     },
 
-    // 🗄️ BASE DE DATOS (SUPABASE)
-    supabase: {
-        url: 'https://akyuuehbjerawwvvauud.supabase.co',
-        key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM'
+    // 🛡️ BÚNKERES DE SEGURIDAD RENDER (Cero Keys Expuestas)
+    bunker: {
+        urlA: "https://axtelix-backend.onrender.com",
+        urlB: "https://axtelix-respaldo.onrender.com"
     }
 };
 
@@ -3329,26 +3329,37 @@ window.pagoDirecto = function(metodo) {
         const folio = window.obtenerSiguienteFolio();
         const metodoTexto = metodo === 'paypal' ? 'PayPal' : metodo === 'mercado' ? 'Mercado Pago' : 'Transferencia';
 
+        const datosVenta = { 
+            Folio: folio, 
+            Cliente: data.nom, 
+            Whatsapp: data.tel, 
+            Direccion: `${data.dir}, ${data.log}. Ref: ${data.ref}`, 
+            Total: parseFloat(precioNumerico) || 0, 
+            Metodo: metodoTexto, 
+            Productos: resumenDinamico 
+        };
+
+        // 🛡️ SISTEMA DE SALTO: BÚNKER A -> BÚNKER B
         try {
-            await fetch(`${CONFIG_SISTEMA.supabase.url}/rest/v1/pedidos`, {
+            console.log("Intentando Búnker A...");
+            let res = await fetch(`${CONFIG_SISTEMA.bunker.urlA}/registrar-venta`, {
                 method: 'POST',
-                headers: { 
-                    'apikey': CONFIG_SISTEMA.supabase.key, 
-                    'Authorization': `Bearer ${CONFIG_SISTEMA.supabase.key}`, 
-                    'Content-Type': 'application/json',
-                    'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify({ 
-                    Folio: folio, 
-                    Cliente: data.nom, 
-                    Whatsapp: data.tel, 
-                    Direccion: `${data.dir}, ${data.log}. Ref: ${data.ref}`, 
-                    Total: parseFloat(precioNumerico) || 0, 
-                    Metodo: metodoTexto, 
-                    Productos: resumenDinamico 
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datosVenta)
             });
-        } catch(e) { console.error(e); }
+            if (!res.ok) throw new Error("A_DORMIDO");
+        } catch(e) {
+            console.warn("⚠️ Búnker A no responde. Activando Búnker B...");
+            try {
+                await fetch(`${CONFIG_SISTEMA.bunker.urlB}/registrar-venta`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosVenta)
+                });
+            } catch (errB) {
+                console.error("❌ Ambos búnkeres fallaron.");
+            }
+        }
 
         mostrarPasoFinal(checkoutCapa, folio, data, resumenDinamico, totalExhibido, metodo);
     };
@@ -3368,7 +3379,6 @@ function mostrarPasoFinal(capa, folio, data, resumen, total, metodo) {
             const esMP = metodo === 'mercado';
             const claseCard = esMP ? "card-front card-mercado" : "card-front";
             
-            // 💡 AHORA TOMA LOS DATOS DIRECTO DE LA CONFIGURACIÓN MAESTRA
             const bancoNombre = esMP ? CONFIG_SISTEMA.datosMercadoPago.nombre : CONFIG_SISTEMA.datosBanco.nombre;
             const numeroMostrado = esMP ? CONFIG_SISTEMA.datosMercadoPago.numero : CONFIG_SISTEMA.datosBanco.clabe;
             const titularMostrado = esMP ? CONFIG_SISTEMA.datosMercadoPago.titular : CONFIG_SISTEMA.datosBanco.titular;
@@ -3448,31 +3458,20 @@ window.toggleAyudaAxt = function() {
     content.classList.toggle('show');
 };
 
-// 💡 AHORA COPIA LA CLABE CORRECTA DEPENDIENDO DE LA TARJETA QUE TOCARON
 window.copiarClabeAxt = function(metodo) {
     const numeroCopiar = metodo === 'mercado' ? CONFIG_SISTEMA.datosMercadoPago.numero : CONFIG_SISTEMA.datosBanco.clabe;
-    const clabeLimpia = numeroCopiar.replace(/\s/g, ''); // Quita los espacios para copiar limpio
+    const clabeLimpia = numeroCopiar.replace(/\s/g, ''); 
     
     navigator.clipboard.writeText(clabeLimpia).then(() => {
         const aviso = document.createElement('div');
         aviso.style = `
-            position: fixed; 
-            bottom: 30px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background: #d4af37; 
-            color: #000; 
-            padding: 15px 30px; 
-            border-radius: 50px; 
-            font-weight: 900; 
-            z-index: 10000000; 
-            font-size: 14px; 
-            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.6); 
-            animation: fadeInAxt 0.3s ease;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            background: #d4af37; color: #000; padding: 15px 30px; border-radius: 50px; 
+            font-weight: 900; z-index: 10000000; font-size: 14px; 
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.6); animation: fadeInAxt 0.3s ease;
         `;
         aviso.innerText = "✨ ¡NÚMERO COPIADO EXITOSAMENTE!";
         document.body.appendChild(aviso);
-        
         setTimeout(() => {
             aviso.style.opacity = "0";
             aviso.style.transition = "0.5s";
@@ -3494,16 +3493,14 @@ function mostrarAvisoMantenimiento(metodo) {
     document.body.appendChild(aviso);
 }
 
-// --- SINCRONIZACIÓN CON RENDER ---
-const URL_SINCRO = "https://axtelix-backend.onrender.com/obtener-inventario";
-
+// --- SINCRONIZACIÓN CON RENDER (AHORA USA EL BÚNKER DINÁMICO) ---
 async function actualizarInventarioReal() {
     console.log("Iniciando sincronización Axtelix...");
     const loader = document.getElementById('loader-axtelix');
     const wspBtn = document.querySelector('.joinchat, .whatsapp-button');
 
     try {
-        const respuesta = await fetch(URL_SINCRO + "?v=" + Date.now());
+        const respuesta = await fetch(`${CONFIG_SISTEMA.bunker.urlA}/obtener-inventario?v=` + Date.now());
         const datosNuevos = await respuesta.json();
 
         if (datosNuevos && datosNuevos.length > 0) {
@@ -3519,55 +3516,48 @@ async function actualizarInventarioReal() {
             productos = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO, ...SOFTWARE];
             if (typeof mostrarProductos === "function") mostrarProductos('todos'); 
         }
-    } catch (e) { console.warn("Modo offline."); }
+    } catch (e) { console.warn("Modo offline o Búnker A dormido."); }
     
     if (loader) loader.style.display = 'none';
     if (wspBtn) wspBtn.style.display = 'block';
 }
 
 actualizarInventarioReal();
-
-
-
-
-
-
 window.addEventListener('load', actualizarInventarioReal);
+
+// =======================================================
+// AXTELIX HYPER-ENGINE V5 | BOSS MODE READY
+// Pásame la siguiente parte desde el "SUPABASE CONFIG"
 // =======================================================
 
-
-/**
+    /**
  * ==============================================================================
- * 💎 AXTELIX HYPER-ENGINE V5 | SUPABASE EDITION
+ * 💎 AXTELIX HYPER-ENGINE V5 | BÚNKER EDITION (Cero Llaves)
  * ==============================================================================
  */
 
 // ============================================================
-// 🔌 SUPABASE CONFIG
+// 🔌 CONEXIÓN AL BÚNKER (Reemplaza la conexión directa a Supabase)
 // ============================================================
-const SUPABASE_URL = 'https://akyuuehbjerawwvvauud.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFreXV1ZWhiamVyYXd3dnZhdXVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDQzMjksImV4cCI6MjA4OTY4MDMyOX0.w-WD2Fn1IDvl850hDBg3iehkckYYymwO6GoQMAj3THM';
+const bunkerReviewsFetch = async (ruta, options = {}) => {
+    const intentar = async (urlBunker) => {
+        const res = await fetch(`${urlBunker}/${ruta}`, {
+            headers: { 'Content-Type': 'application/json' },
+            ...options
+        });
+        if (!res.ok) throw new Error("Fallo en búnker");
+        const text = await res.text();
+        return text ? JSON.parse(text) : [];
+    };
 
-/**
- * Helper genérico para llamadas a la REST API de Supabase.
- */
-const sbFetch = async (path, options = {}) => {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-        headers: {
-            'apikey':        SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type':  'application/json',
-            'Prefer':        'return=representation',
-            ...options.headers
-        },
-        ...options
-    });
-    if (!res.ok) {
-        const err = await res.text();
-        throw new Error(err);
+    try {
+        // Intenta con el servidor Principal (Oregon)
+        return await intentar(CONFIG_SISTEMA.bunker.urlA);
+    } catch (e) {
+        console.warn("⚠️ Búnker A ocupado. Cargando reseñas desde Búnker B...");
+        // Si falla, salta al de Respaldo (Ohio)
+        return await intentar(CONFIG_SISTEMA.bunker.urlB);
     }
-    const text = await res.text();
-    return text ? JSON.parse(text) : [];
 };
 
 // ============================================================
@@ -3576,7 +3566,6 @@ const sbFetch = async (path, options = {}) => {
 class AxtelixEngine {
 
     constructor() {
-        // Supabase sustituye localStorage para las reviews
         this.votesKey  = 'axtelix_votes_v5';
         this.adminKey  = 'axtelix_boss_mode';
 
@@ -3587,7 +3576,7 @@ class AxtelixEngine {
         this.currentFilter       = 'all';
         this.selectedStars       = 0;
         this.uploadedImageBase64 = null;
-        this.maxChars            = 180; // Changed from maxWords to maxChars
+        this.maxChars            = 180; 
         this.maxNameChars        = 20;
 
         this.DOM = {
@@ -3614,66 +3603,27 @@ class AxtelixEngine {
         this.init();
     }
 
-    // ----------------------------------------------------------
-    // INIT
-    // ----------------------------------------------------------
     async init() {
-    if (!this.DOM.track) {
-        console.error('AXTELIX ERROR: DOM Nodes not found.');
-        return;
+        if (!this.DOM.track) return;
+
+        const splashtexts = [
+            "Nota de salida: Bergamota italiana. Nota de fondo: Éxito puro.",
+            "Dato Curioso: Las Dunk nacieron en 1985 para el basketball colegial.",
+            "Sincronizando con los servidores de la moda en Milán...",
+            "Dato: Un par de Dunk nuevos aumenta la dopamina en un 100%.",
+            "Certificando autenticidad: El estándar Axtelix es innegociable."
+        ];
+
+        const randomSplash = splashtexts[Math.floor(Math.random() * splashtexts.length)];
+
+        this.setupEventListeners();
+        this.buildStarPicker();
+        await this.loadFromSupabase();
+        this.showToast(randomSplash, 'success');
     }
 
-    const splashtexts = [
-        // --- SECCIÓN: NOTAS DE PERFUMERÍA (SOPHISTICATED) ---
-        "Nota de salida: Bergamota italiana. Nota de fondo: Éxito puro.",
-        "Dato Curioso: El Ámbar Gris tarda años en madurar su aroma.",
-        "¿Sabías que el Oud es conocido como el 'oro líquido' de Arabia?",
-        "Extrayendo esencia de Vainilla de Madagascar para tu próximo pedido...",
-        "Equilibrando las notas de corazón: Lavanda y Cuero detectados.",
-        "Dato: Un buen perfume se revela diferente en cada tipo de piel.",
-        "Destilando elegancia: El Iris es una de las notas más caras del mundo.",
-        "Sintonizando la estela: Tu aroma llegará antes que tus palabras.",
-        "Dato Pro: No frotes tus muñecas, rompes las moléculas del perfume.",
-
-        // --- SECCIÓN: SNEAKER HERITAGE (ELITE) ---
-        "Dato Curioso: Las Dunk nacieron en 1985 para el basketball colegial.",
-        "Analizando la calidad del cuero: Grano completo detectado.",
-        "¿Sabías que la suela 'Cupsole' fue diseñada para resistir impactos?",
-        "Verificando costuras: 22 puntadas por pulgada para máxima duración.",
-        "Dato: El color 'OG' siempre mantiene su valor en el tiempo.",
-        "Tu par actual tiene una herencia de más de 40 años de diseño.",
-        "Ajustando la amortiguación: Comodidad nivel profesional activa.",
-        "Dato: Los tenis blancos se ven mejor cuando cuentan una historia.",
-
-        // --- SECCIÓN: AXTELIX HYPER-CURIOSOS (FORMAL-JUGUETÓN) ---
-        "Sincronizando con los servidores de la moda en Milán...",
-        "Dato: El 90% de un buen outfit comienza por los pies.",
-        "Optimizando tu presencia: El estilo es el lenguaje del éxito.",
-        "Buscando en el inventario: Solo piezas con alma encontradas.",
-        "Dato Curioso: Axtelix no vende productos, vende autoridad.",
-        "Certificando autenticidad: El estándar Axtelix es innegociable.",
-        "Procesando envío: Tu paquete viaja en clase ejecutiva.",
-        "Dato: La confianza es el accesorio que mejor combina contigo.",
-        "Escaneando tendencias... Tu elección está en el Top 1% global.",
-        "Axtelix Engine: Refinando el arte de comprar calzado.",
-        "Dato: Un par de Dunk nuevos aumenta la dopamina en un 100%.",
-        "Estableciendo conexión segura con tu próximo par favorito...",
-        "Dato Curioso: El lujo silencioso no grita, simplemente se nota.",
-        "Inyectando esencia premium a tu sesión de navegación..."
-    ];
-
-    const randomSplash = splashtexts[Math.floor(Math.random() * splashtexts.length)];
-
-    this.setupEventListeners();
-    this.buildStarPicker();
-    await this.loadFromSupabase();
-
-    // El toast ahora se siente como un "Dato del Sommelier"
-    this.showToast(randomSplash, 'success');
-}
-
     // ----------------------------------------------------------
-    // SUPABASE — LEER
+    // BÚNKER — LEER
     // ----------------------------------------------------------
     async loadFromSupabase() {
         this.DOM.track.innerHTML = `
@@ -3681,13 +3631,12 @@ class AxtelixEngine {
                 CARGANDO RIELE...
             </div>`;
         try {
-            const data = await sbFetch('reviews?order=created_at.desc');
+            const data = await bunkerReviewsFetch('obtener-reviews');
             this.database = data;
             this.renderRiele();
             this.updateDashboard();
         } catch (e) {
             console.error('Error cargando reviews:', e);
-            this.showToast('Error conectando con Supabase.', 'error');
             this.DOM.track.innerHTML = `
                 <div style="padding:50px;color:#ff4444;font-family:'Syncopate';text-align:center;width:100%;letter-spacing:2px;">
                     ERROR DE CONEXIÓN
@@ -3696,73 +3645,57 @@ class AxtelixEngine {
     }
 
     // ----------------------------------------------------------
-    // SUPABASE — GUARDAR
+    // BÚNKER — GUARDAR
     // ----------------------------------------------------------
     async saveToSupabase(entry) {
-        const data = await sbFetch('reviews', {
+        const data = await bunkerReviewsFetch('guardar-review', {
             method: 'POST',
             body:   JSON.stringify(entry)
         });
-        return data[0];
+        return data[0] || data;
     }
 
     // ----------------------------------------------------------
-    // SUPABASE — VOTOS
+    // BÚNKER — VOTOS
     // ----------------------------------------------------------
     async updateVoteInSupabase(id, field, newValue) {
-        await sbFetch(`reviews?id=eq.${id}`, {
-            method: 'PATCH',
-            body:   JSON.stringify({ [field]: newValue })
+        await bunkerReviewsFetch('votar-review', {
+            method: 'POST',
+            body:   JSON.stringify({ id, field, newValue })
         });
     }
 
     // ----------------------------------------------------------
-    // SUPABASE — BORRAR (ADMIN)
+    // BÚNKER — BORRAR (ADMIN)
     // ----------------------------------------------------------
     async deleteFromSupabase(id) {
-        await sbFetch(`reviews?id=eq.${id}`, {
-            method: 'DELETE'
+        await bunkerReviewsFetch('borrar-review', {
+            method: 'POST',
+            body:   JSON.stringify({ id })
         });
     }
 
     // ----------------------------------------------------------
-    // EVENT LISTENERS
+    // EVENT LISTENERS Y UTILIDADES (SIN CAMBIOS)
     // ----------------------------------------------------------
     setupEventListeners() {
-        // Contador de caracteres en textarea
-        if (this.DOM.inputText) {
-            this.DOM.inputText.addEventListener('input', (e) => this.handleWordCount(e));
-        }
-
-        // Contador caracteres en nombre
+        if (this.DOM.inputText) this.DOM.inputText.addEventListener('input', (e) => this.handleWordCount(e));
         if (this.DOM.inputName) {
             this.DOM.inputName.addEventListener('input', () => {
                 const len = this.DOM.inputName.value.length;
                 if (this.DOM.nameCharCount) {
                     this.DOM.nameCharCount.innerText = len;
-                    this.DOM.nameCharCount.style.color =
-                        len >= this.maxNameChars ? 'var(--gold-primary)' : '#555';
+                    this.DOM.nameCharCount.style.color = len >= this.maxNameChars ? 'var(--gold-primary)' : '#555';
                 }
             });
         }
-
-        // Subida de imagen
-        if (this.DOM.inputFile) {
-            this.DOM.inputFile.addEventListener('change', (e) => this.handleImageUpload(e));
-        }
-
-        // Flechas del slider (solo PC)
+        if (this.DOM.inputFile) this.DOM.inputFile.addEventListener('change', (e) => this.handleImageUpload(e));
         if (this.DOM.btnPrev && this.DOM.btnNext && this.DOM.viewport) {
-            this.DOM.btnNext.addEventListener('click', () =>
-                this.DOM.viewport.scrollBy({ left: 350, behavior: 'smooth' }));
-            this.DOM.btnPrev.addEventListener('click', () =>
-                this.DOM.viewport.scrollBy({ left: -350, behavior: 'smooth' }));
+            this.DOM.btnNext.addEventListener('click', () => this.DOM.viewport.scrollBy({ left: 350, behavior: 'smooth' }));
+            this.DOM.btnPrev.addEventListener('click', () => this.DOM.viewport.scrollBy({ left: -350, behavior: 'smooth' }));
         }
     }
 
-    // ----------------------------------------------------------
-    // TOAST
-    // ----------------------------------------------------------
     showToast(message, type = 'info') {
         if (!this.DOM.notify) return;
         this.DOM.notify.innerText        = message;
@@ -3772,9 +3705,6 @@ class AxtelixEngine {
         setTimeout(() => this.DOM.notify.classList.remove('show'), 3000);
     }
 
-    // ----------------------------------------------------------
-    // STAR PICKER
-    // ----------------------------------------------------------
     buildStarPicker() {
         this.DOM.starGroup.innerHTML = '';
         for (let i = 1; i <= 5; i++) {
@@ -3792,7 +3722,6 @@ class AxtelixEngine {
                 star.classList.add('animate__animated', 'animate__heartBeat');
                 setTimeout(() => star.classList.remove('animate__animated', 'animate__heartBeat'), 1000);
             });
-
             this.DOM.starGroup.appendChild(star);
         }
     }
@@ -3812,13 +3741,9 @@ class AxtelixEngine {
         });
     }
 
-    // ----------------------------------------------------------
-    // CHARACTER COUNT
-    // ----------------------------------------------------------
     handleWordCount(e) {
         const text  = e.target.value;
-        const count = text.length; // Now counting characters, not words
-
+        const count = text.length; 
         this.DOM.wordCount.innerText = count;
         const pct = Math.min((count / this.maxChars) * 100, 100);
         this.DOM.wordBar.style.width = `${pct}%`;
@@ -3835,9 +3760,6 @@ class AxtelixEngine {
         }
     }
 
-    // ----------------------------------------------------------
-    // IMAGE UPLOAD
-    // ----------------------------------------------------------
     handleImageUpload(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -3857,18 +3779,12 @@ class AxtelixEngine {
         reader.readAsDataURL(file);
     }
 
-    // ----------------------------------------------------------
-    // SANITIZE
-    // ----------------------------------------------------------
     escapeHTML(str) {
         return str.replace(/[&<>'"]/g, tag => ({
             '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
         }[tag] || tag));
     }
 
-    // ----------------------------------------------------------
-    // SUBMIT → SUPABASE
-    // ----------------------------------------------------------
     async submitReview() {
         const rawName = this.DOM.inputName.value;
         const rawText = this.DOM.inputText.value;
@@ -3909,9 +3825,6 @@ class AxtelixEngine {
         }
     }
 
-    // ----------------------------------------------------------
-    // RENDER CARDS
-    // ----------------------------------------------------------
     renderRiele() {
         this.DOM.track.innerHTML = '';
 
@@ -3952,7 +3865,6 @@ class AxtelixEngine {
 
             card.innerHTML = `
                 <div class="axt-card-inner" onclick="this.parentElement.classList.toggle('is-flipped')">
-
                     <div class="axt-card-front">
                         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
                             <div style="display:flex;gap:2px;">${this.generateStaticStars(item.stars)}</div>
@@ -3965,13 +3877,10 @@ class AxtelixEngine {
                                 </button>
                             </div>
                         </div>
-
                         <p style="font-size:13px;color:#ddd;line-height:1.6;flex-grow:1;font-weight:300;">
                             "${item.text}"
                         </p>
-
                         ${imageHTML}
-
                         <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:flex-end;">
                             <div>
                                 <span style="display:block;color:var(--gold-primary);font-weight:900;font-size:12px;letter-spacing:1px;">
@@ -3982,7 +3891,6 @@ class AxtelixEngine {
                             ${deleteBtn}
                         </div>
                     </div>
-
                     <div class="axt-card-back">
                         <i class="fas fa-crown" style="font-size:45px;color:var(--gold-primary);margin-bottom:20px;filter:drop-shadow(0 0 15px var(--gold-glow-strong));"></i>
                         <h3 style="color:var(--gold-primary);font-family:'Syncopate';font-size:14px;letter-spacing:3px;">AXTELIX</h3>
@@ -3990,16 +3898,11 @@ class AxtelixEngine {
                         <div style="margin-top:30px;width:80%;height:1px;background:var(--border-gold);"></div>
                         <p style="font-size:9px;color:#444;margin-top:15px;text-transform:uppercase;letter-spacing:2px;">Block ID: ${item.id}</p>
                     </div>
-
                 </div>`;
-
             this.DOM.track.appendChild(card);
         });
     }
 
-    // ----------------------------------------------------------
-    // DASHBOARD
-    // ----------------------------------------------------------
     updateDashboard() {
         if (this.database.length === 0) {
             this.DOM.avgRating.innerText       = '0.0';
@@ -4029,11 +3932,8 @@ class AxtelixEngine {
         }
     }
 
-    // ----------------------------------------------------------
-    // VOTOS → SUPABASE
-    // ----------------------------------------------------------
     async handleVote(id, type) {
-        if (this.userVotes[id]) return; // ya votó
+        if (this.userVotes[id]) return; 
 
         const index = this.database.findIndex(r => r.id === id);
         if (index === -1) return;
@@ -4041,18 +3941,15 @@ class AxtelixEngine {
         const field    = type === 'like' ? 'likes' : 'dislikes';
         const newValue = this.database[index][field] + 1;
 
-        // Optimistic UI: actualiza visual de inmediato
         this.database[index][field] = newValue;
         this.userVotes[id]          = type;
         localStorage.setItem(this.votesKey, JSON.stringify(this.userVotes));
         this.renderRiele();
 
-        // Sincroniza con Supabase
         try {
             await this.updateVoteInSupabase(id, field, newValue);
         } catch (e) {
             console.error('Error actualizando voto:', e);
-            // Revierte si falló
             this.database[index][field]--;
             delete this.userVotes[id];
             localStorage.setItem(this.votesKey, JSON.stringify(this.userVotes));
@@ -4061,9 +3958,6 @@ class AxtelixEngine {
         }
     }
 
-    // ----------------------------------------------------------
-    // DELETE → SUPABASE (ADMIN)
-    // ----------------------------------------------------------
     async deletePost(id) {
         if (!confirm('System Override: ¿Eliminar este registro permanentemente?')) return;
         try {
@@ -4078,9 +3972,6 @@ class AxtelixEngine {
         }
     }
 
-    // ----------------------------------------------------------
-    // UTILS
-    // ----------------------------------------------------------
     generateStaticStars(rating) {
         let html = '';
         for (let i = 1; i <= 5; i++) {
@@ -4132,19 +4023,13 @@ window.toggleAxtModal  = () => axtApp.toggleModal();
 window.submitAxtReview = () => axtApp.submitReview();
 window.filterReviews   = (type) => axtApp.filterReviews(type);
 
-/**
- * MODO ADMIN — ejecutar en consola del navegador (F12):
- * enableAxtBossMode()
- *
- * Activa los botones DELETE rojos en cada tarjeta.
- * Solo se activa en tu navegador, nadie más lo ve.
- */
 window.enableAxtBossMode = () => {
     localStorage.setItem('axtelix_boss_mode', 'true');
     axtApp.isAdmin = true;
     axtApp.renderRiele();
-    axtApp.showToast('Boss Mode Activated. Welcome back, Luis Enrique Villa Ruelas.', 'success');
+    axtApp.showToast('Boss Mode Activated.', 'success');
 };
+
 // ============================================================
 // 🛑 AXTELIX ANTI-FLICKER ULTIMATUM (SOLO MÓVIL)
 // ============================================================
@@ -4156,57 +4041,21 @@ const stopAxtelixFlicker = () => {
         const style = document.createElement('style');
         style.id = styleId;
         style.innerHTML = `
-            /* 1. Eliminamos CUALQUIER cálculo de transparencia o 3D que cause el parpadeo */
             .axt-card, .axt-card-inner, .axt-card-front, .axt-card-back {
-                transition: none !important;
-                transform: none !important;
-                perspective: none !important;
-                -webkit-backface-visibility: visible !important;
-                backface-visibility: visible !important;
-                /* Evitamos que el navegador intente optimizar lo que no debe */
-                will-change: auto !important;
+                transition: none !important; transform: none !important; perspective: none !important;
+                -webkit-backface-visibility: visible !important; backface-visibility: visible !important; will-change: auto !important;
             }
-
-            /* 2. Forzamos que la tarjeta sea un bloque sólido */
-            .axt-card-inner {
-                display: block !important;
-                position: relative !important;
-            }
-
-            /* 3. INTERCAMBIO BINARIO (Si uno está, el otro NO existe) */
-            /* Esto evita que las dos capas peleen por el mismo píxel */
-            .axt-card-front { 
-                display: block !important; 
-            }
-            .axt-card-back { 
-                display: none !important; 
-            }
-
-            /* Cuando activas el flip, el cambio es radical */
-            .is-flipped .axt-card-front { 
-                display: none !important; 
-            }
-            .is-flipped .axt-card-back { 
-                display: flex !important; 
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-
-            /* 4. Estabilizador de Scroll para el Viewport */
-            #axtViewport {
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch !important;
-                /* Evita que el renderizado de la página salte al scrollear */
-                contain: content;
-            }
+            .axt-card-inner { display: block !important; position: relative !important; }
+            .axt-card-front { display: block !important; }
+            .axt-card-back { display: none !important; }
+            .is-flipped .axt-card-front { display: none !important; }
+            .is-flipped .axt-card-back { display: flex !important; flex-direction: column; justify-content: center; align-items: center; }
+            #axtViewport { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; contain: content; }
         `;
         document.head.appendChild(style);
-        console.log("💎 Axtelix: Flicker Killed.");
     }
 };
 
-// Ejecución segura
 window.addEventListener('load', stopAxtelixFlicker);
 window.addEventListener('resize', stopAxtelixFlicker);
 stopAxtelixFlicker();
