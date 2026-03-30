@@ -2676,137 +2676,91 @@ textarea.axt-input-field { resize: none; line-height: 1.5; }
 
 
 
-    <script>
-        let cart = [];
-        let descuentoAplicado = 0;
+<script>
+    let cart = [];
+    let descuentoAplicado = 0;
+    let INVENTARIO = [];
 
-        const PERFUMERIA = [
-            { cat: 'perfumes', nombre: 'JPG Elixir', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'jpgelixir-wp.jpeg', desc: 'Salida de lavanda tropical, corazón de benjuí (resina dulce) y base de haba tonka y vainilla. Un aroma denso, ardiente y sumamente proyectivo para la noche.' },
-            { cat: 'perfumes', nombre: 'Sauvage Dior Elixir', precio: 1099, oferta: false, agotado: false, img: 'sauvageDior-wp.jpeg', desc: 'Un concentrado licoroso de canela, cardamomo y nuez moscada, con un corazón de lavanda de Nyons y fondo de maderas ricas. Es la versión más potente y madura de Sauvage.' },
-            { cat: 'perfumes', nombre: 'Bleu De Chanel', precio: 1299, precioOriginal: 1500, oferta: false, agotado: false, img: 'bleuofchanel-wp.jpeg', desc: 'Notas cítricas de toronja y menta, que evolucionan a un fondo de incienso, cedro y sándalo. Es el estándar de la elegancia limpia y profesional.' },
-            { cat: 'perfumes', nombre: 'Versace', precio: 1199, precioOriginal: 1500, oferta: false, agotado: false, img: 'versace1-wp.png', desc: 'Menta vibrante, manzana verde y limón italiano en la salida, con un fondo dulce de haba tonka y ambroxan. Energía pura diseñada para durar y proyectar.' },
-            { cat: 'perfumes', nombre: 'Stronger With You Absolutely', precio: 1249, precioOriginal: 1500, oferta: false, agotado: false, img: 'stronger1-wp.png', desc: 'Un acorde de ron (licor), lavanda y una base potente de castaña glaseada con vainilla de Madagascar. Aroma cálido, dulce y sumamente sofisticado.' },
-            { cat: 'perfumes', nombre: 'JPG Scandal Le Parfum', precio: 1199, precioOriginal: 1500, oferta: false, agotado: false, img: 'scandal-wp.png', desc: 'Salida de geranio fresco, corazón de caramelo salado y base de haba tonka. Una fragancia audaz, dulce y magnética que no pasa desapercibida.' },
-            { cat: 'perfumes', nombre: '9PM Rebel', precio: 949, precioOriginal: 1500, oferta: false, agotado: false, img: '9pmrebel-wp.png', desc: 'Notas frutales de manzana y piña, con un toque de canela y una base profunda de vainilla y pachulí. La opción más vibrante y energética para salidas nocturnas.' },
-            { cat: 'perfumes', nombre: 'JPG Le Male Le Parfum', precio: 1299, precioOriginal: 1500, oferta: false, agotado: false, img: 'lemale-wp.jpeg', desc: 'Cardamomo intenso en la salida, corazón de lavanda e iris, y una base de vainilla negra y maderas. Es el olor de la autoridad: oscuro, elegante y empolvado.' },
-            { cat: 'perfumes', nombre: 'Valentino Born In Roma Rockstud', precio: 1199, precioOriginal: 1500, oferta: false, agotado: false, img: 'valentino1-wp.jpeg', desc: 'Salvia aromática y jengibre picante, con un fondo mineral de ámbar gris. Una fragancia moderna, oscura y con un estilo muy actual.' },
-            { cat: 'perfumes', nombre: 'Bad Boy Le Parfum', precio: 1150, oferta: false, agotado: false, img: 'badboy-wp.jpeg', desc: 'Una salida atrevida de pomelo y cannabis, corazón de pimienta negra y una base de cuero y vetiver. Un aroma rebelde, oscuro y con mucho carácter.' },
-            { cat: 'perfumes', nombre: 'Dylan Blue', precio: 899, precioOriginal: 1650, oferta: false, agotado: false, img: 'dylanblue-wp.jpg', desc: 'El equilibrio perfecto entre frescura marina y seducción intensa.' },
-            { cat: 'perfumes', nombre: 'Bad Boy Cobalt Elixir', precio: 1150, precioOriginal: 1650, oferta: false, agotado: false, img: 'cobalt-wp.jpg', desc: 'Electrizante y fresco. La esencia del hombre moderno y audaz.' },
-            { cat: 'perfumes', nombre: 'Club de Nuit Intense Man', precio: 750, precioOriginal: 1650, oferta: false, agotado: false, img: 'clubnuit-wp.jpg', desc: 'Lujoso y potente. Un aroma que proyecta éxito en cada paso.' },
-            { cat: 'perfumes', nombre: 'JPG Paradise Garden', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'paradise-wp.jpg', desc: 'Exótico y tropical. Un viaje sensorial al paraíso prohibido.' },
-            { cat: 'perfumes', nombre: 'Azzaro The Most Wanted', precio: 1050, precioOriginal: 1650, oferta: false, agotado: false, img: 'azzaro-wp.jpg', desc: 'El arma de seducción definitiva. Dulce, especiado e irresistible.' },
-            { cat: 'perfumes', nombre: 'JPG Le Male Elixir Absolu', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'absolu-wp.jpg', desc: 'Intenso como el oro. Una mezcla ardiente de vainilla y lavanda.' },
-            { cat: 'perfumes', nombre: 'Versace Eros Flame', precio: 849, precioOriginal: 1650, oferta: false, agotado: false, img: 'VersaceErosFlame-wp.jpg', desc: 'Pasión en estado puro. Notas cítricas y amaderadas que queman.' },
-            { cat: 'perfumes', nombre: '212 VIP Black', precio: 849, precioOriginal: 1650, oferta: false, agotado: false, img: '212black-wp.jpg', desc: 'El alma de la fiesta. Un aroma explosivo, dulce y magnético.' },
-            { cat: 'perfumes', nombre: 'Bond No. 9 Madison Avenue - Eau de Parfum', precio: 1890, precioOriginal: 1650, oferta: false, agotado: false, img: 'madisonavenue-wp.jpg', desc: 'La esencia del shopping de lujo en Nueva York. Madison Avenue es una fragancia fresca, floral y afrutada diseñada para la mujer moderna y con estilo. Destacan sus notas de manzana, bergamota y zarzamora, que se mezclan con un corazón de rosa y jazmín sobre una base de pachulí. Un aroma vibrante, sofisticado y lleno de energía.' },
-            { cat: 'perfumes', nombre: 'Bond No. 9 Lafayette Street - Eau de Parfum', precio: 1950, precioOriginal: 1650, oferta: false, agotado: false, img: 'lafayette-wp.jpg', desc: 'El aroma de la confianza absoluta. Lafayette Street es una fragancia versátil y ultra moderna que combina notas cítricas, florales y amaderadas. Destaca por su salida fresca de bergamota y cilantro, que evoluciona hacia un fondo dulce y suave de vainilla, ámbar y haba tonka. Es el perfume perfecto tanto para el día como para la noche, ideal para quien busca destacar con elegancia.' },
-            { cat: 'perfumes', nombre: 'Louis Vuitton Myriad - Extrait de Parfum', precio: 1990, precioOriginal: 2450, oferta: true, agotado: false, img: 'myriad-wp.jpg', desc: 'Una joya de la alta perfumería. Myriad es una fragancia profunda y opulenta que rinde homenaje al preciado Oud. Se mezcla con notas de rosa de Grasse, azafrán y cacao, creando un aroma cálido, especiado y sumamente sofisticado. Su frasco, diseñado con un tapón escultórico único, refleja la exclusividad de su interior. Una experiencia sensorial para los gustos más exigentes.' },
-            { cat: 'perfumes', nombre: 'Creed Aventus', precio: 1699, precioOriginal: 2850, oferta: true, agotado: false, img: 'adventus-wp.jpg', desc: 'La fragancia de los líderes. Una mezcla magistral de piña, abedul y almizcle que proyecta seguridad y éxito. Ideal para marcar presencia en cualquier entorno profesional.' },
-            { cat: 'perfumes', nombre: 'Creed Centaurus', precio: 1699, precioOriginal: 1650, oferta: false, agotado: false, img: 'centaurus-wp.jpg', desc: 'Una propuesta intensa y mística en su icónico frasco rojo. Notas de especias y maderas nobles que crean una atmósfera de distinción única e imponente.' },
-            { cat: 'perfumes', nombre: 'Xerjoff Erba Pura', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'erbapura-wp.jpg', desc: 'Una explosión de frutas mediterráneas con un fondo de vainilla cálida. Frescura sofisticada con una duración extrema que te acompaña durante todo el día.' },
-            { cat: 'perfumes', nombre: 'Xerjoff Erba Accento (Eau de Parfum)', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'erbapuraaccento-wp.jpg', desc: 'Elegancia pura y pulcra. Notas de piña y jazmín en un fondo de pachulí suave. La fragancia del caballero moderno: impecable, discreta y siempre bajo control.' },
-            { cat: 'perfumes', nombre: 'Tom Ford Tobacco Vanille (Eau de Parfum)', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'tomfordtobacco-wp.jpg', desc: 'Un clásico de la alta perfumería. Tabaco artesanal mezclado con vainilla cremosa y frutos secos. Un aroma cálido y opulento que evoca madurez y gusto exquisito.' },
-            { cat: 'perfumes', nombre: 'Tom Ford Ombré Leather (Eau de Parfum)', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'tomford-wp.jpg', desc: 'La esencia de la libertad. El aroma del cuero negro se mezcla con notas florales y especias, creando una fragancia con carácter y actitud decidida.' },
-            { cat: 'perfumes', nombre: 'Dolce & Gabbana The One For Men (Eau de Parfum)', precio: 1150, precioOriginal: 1650, oferta: false, agotado: false, img: 'dolcetheone-wp.jpg', desc: 'Un imán de cumplidos. Notas de tabaco dulce, jengibre y cardamomo que crean una atmósfera magnética. El compañero perfecto para una cita importante.' },
-            { cat: 'perfumes', nombre: 'Dior Sauvage Parfum', precio: 1400, precioOriginal: 1400, oferta: false, agotado: false, img: 'diorparfum-wp.jpg', desc: 'La versión más densa y nocturna. Con sándalo de Sri Lanka y haba tonka, ofrece una masculinidad profunda y misteriosa con la máxima duración.' },
-            { cat: 'perfumes', nombre: 'Dior Sauvage Eau de Parfum', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'diorEDP-wp.jpg', desc: 'El balance ideal entre frescura y profundidad. Su toque ahumado de vainilla lo hace perfecto tanto para el día como para la noche. Versatilidad pura.' },
-            { cat: 'perfumes', nombre: 'Dior Sauvage Eau de Toilette', precio: 1350, precioOriginal: 1650, oferta: false, agotado: false, img: 'diorEDT-wp.jpg', desc: 'Frescura eléctrica y directa. Su nota de bergamota de Calabria es reconocida por su energía. Un básico esencial para proyectar una imagen limpia.' },
-            { cat: 'perfumes', nombre: 'JPG Divine (Eau de Parfum)', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'jpgDIVINE-wp.jpg', desc: 'La nueva joya de Gaultier. Una fragancia que rompe esquemas con notas solares y un toque salino. Innovación magnética para el estilo de vida actual.' },
-            { cat: 'perfumes', nombre: 'Prada Luna Rossa Ocean (Eau de Parfum)', precio: 1300, precioOriginal: 1650, oferta: false, agotado: false, img: 'pradaocean-wp.jpg', desc: 'Sofisticación azul reinventada. El iris y la lavanda aportan una sensación de limpieza extrema. El aroma del hombre dinámico que valora la pulcritud tecnológica.' },
-            { cat: 'perfumes', nombre: 'Armaf Club de Nuit Iconic (Eau de Parfum)', precio: 750, precioOriginal: 1650, oferta: false, agotado: false, img: 'iconic-wp.jpg', desc: 'Potencia y frescura en un solo frasco. Conocido por su gran proyección, es la opción todo terreno para quien busca que su presencia se note desde que entra.' },
-            { cat: 'perfumes', nombre: 'Carolina Herrera Good Girl - Eau de Parfum', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'carolinaH-wp.jpg', desc: 'Una fragancia icónica que destaca por su elegancia y sofisticación. Good Girl combina notas florales de jazmín y nardo con un toque cálido de cacao y haba tonka. Su diseño en forma de tacón azul medianoche es un símbolo de estilo a nivel mundial. Ideal para uso nocturno o eventos especiales. Presentación de 80ml.' },
-            { cat: 'perfumes', nombre: 'Carolina Herrera Good Girl Légere - Eau de Parfum', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'carolinaHxir-wp.jpg', desc: 'Una versión más luminosa y fresca del icónico tacón. Good Girl Légere destaca por su equilibrio perfecto entre el dulce del dulce de leche y la frescura del jazmín y el ylang-ylang. Es una fragancia sofisticada, ideal para el uso diario o eventos de día, que mantiene la elegancia característica de la línea. Presentación de 80ml con frasco en degradado azul.' },
-            { cat: 'perfumes', nombre: 'Bond No. 9 Greenwich Village - Eau de Parfum', precio: 1850, precioOriginal: 1650, oferta: false, agotado: false, img: 'greenwich-wp.jpg', desc: 'La esencia de la sofisticación neoyorquina. Greenwich Village es una fragancia cautivadora que equilibra la frescura del lichi y la mandarina con la dulzura del praliné y el toque moderno del ambroxan. Un aroma ligero, elegante y con una fijación excepcional, ideal para quien busca una firma olfativa única y refrescante. Presentación premium de 100ml.' },
-            { cat: 'perfumes', nombre: 'JPG Le Beau - Eau de Toilette', precio: 1299, precioOriginal: 1650, oferta: false, agotado: false, img: 'lebeau-wp.jpg', desc: 'La frescura del paraíso en un frasco. Le Beau de Jean Paul Gaultier es una fragancia magnética y ultra fresca que gira en torno a tres notas clave: la frescura del bergamota, la calidez de la madera de coco y la dulzura del haba tonka. Un aroma tropical, sexy y moderno, ideal para el uso diario o climas cálidos. Presentación de 125ml en su icónico frasco de torso masculino.' },
-            { cat: 'perfumes', nombre: 'Odyssey Mandarin', precio: 549, precioOriginal: 1650, oferta: false, agotado: false, img: 'Odyssey-wp.jpg', desc: 'Un perfume muy equilibrado que combina notas modernas con un fondo clásico. No es escandaloso, es más bien un aroma que acompaña bien en el trabajo o en reuniones tranquilas. Una opción segura si no sabes cuál elegir.' },
-            { cat: 'perfumes', nombre: 'Invictus Elixir', precio: 1200, precioOriginal: 1650, oferta: false, agotado: false, img: 'invictusE-wp.jpg', desc: 'Si te gusta el aroma clásico de Invictus pero buscas que se sienta un poco más profundo y serio, esta versión es la ideal. Tiene un toque de vainilla salada que lo hace muy agradable y fácil de llevar a diario.' },
-            { cat: 'perfumes', nombre: 'Hawas Fire', precio: 800, precioOriginal: 1650, oferta: false, agotado: false, img: 'hawasfire-wp.jpg', desc: 'Una opción muy versátil que mezcla notas cítricas con un toque cálido. Es de esos perfumes que te pones cuando quieres sentirte limpio y con energía. Se adapta bien a cualquier clima y no cansa el olfato.' },
-            { cat: 'perfumes', nombre: 'Hawas Elixir', precio: 750, precioOriginal: 1650, oferta: false, agotado: false, img: 'hawasE-wp.jpg', desc: 'Esta es una versión un poco más concentrada. Mantiene la frescura que a todos les gusta pero se siente un poco más maduro y tranquilo. Lo mejor que tiene es que se queda contigo muchas horas sin necesidad de retocarlo.' },
-            { cat: 'perfumes', nombre: '9PM', precio: 850, precioOriginal: 1650, oferta: false, agotado: false, img: '9pm-wp.jpg', desc: 'Un perfume muy cómodo de usar, con notas de vainilla y manzana que se sienten suaves pero duran todo el día. Es ideal si buscas algo que huela bien sin ser demasiado fuerte. Muy recomendado para salir por la tarde o noche.' },
-            { cat: 'perfumes', nombre: 'Parfums de Marly Layton', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'marlyazul-wp.jpg', desc: 'Un aroma que huele a limpio, como recién salido de bañar. Es muy fresco, con notas de lavanda y cítricos que dan una sensación de orden y confianza. Es el tipo de perfume que a todo el mundo le cae bien.' },
-            { cat: 'perfumes', nombre: 'Hawas Ice', precio: 899, precioOriginal: 1650, oferta: false, agotado: false, img: 'hawasHice-wp.jpg', desc: 'Frescura glacial. La versión más potente y fría del legendario Hawas.' },
-            { cat: 'perfumes', nombre: 'Maison Francis Kurkdjian - Baccarat Rouge 540', precio: 1450, precioOriginal: 1650, oferta: false, agotado: false, img: 'maison-wp.jpg', desc: 'Un aroma verdaderamente especial que se siente como una segunda piel. Destaca por su equilibrio perfecto entre el dulzor del jazmín y la calidez del ámbar. Es una fragancia luminosa y sofisticada, ideal si buscas algo que deje una impresión memorable pero suave.' },
-            { cat: 'perfumes', nombre: 'Afnan 9AM', precio: 890, precioOriginal: 1650, oferta: false, agotado: false, img: '9amDivine-wp.jpg', desc: 'La opción ideal para quienes disfrutan de los aromas frescos y energéticos. Se siente como una brisa marina combinada con toques de menta y cítricos. Es muy versátil: perfecto tanto para el gimnasio como para una salida casual el fin de semana.' },
-            { cat: 'perfumes', nombre: 'Afnan 9AM Dive', precio: 850, precioOriginal: 1650, oferta: false, agotado: false, img: '9am-wp.jpg', desc: 'Pensado para acompañarte en tus actividades diarias desde temprano. Tiene un carácter limpio y revitalizante gracias a sus notas de mandarina y cardamomo. Es ese perfume que te hace sentir impecable y listo para cualquier reunión.' },
-            { cat: 'perfumes', nombre: 'Armani Acqua di Giò - Classic', precio: 1150, precioOriginal: 1650, oferta: false, agotado: false, img: 'gio1-wp.jpg', desc: 'Un clásico que nunca falla porque transmite naturalidad y frescura. Inspirado en el mar y el sol, mezcla notas acuáticas con cítricos ligeros. Es la elección segura si buscas un aroma que a todo el mundo le agrada.' },
-            { cat: 'perfumes', nombre: 'Armani Acqua di Giò Profondo', precio: 1250, precioOriginal: 1650, oferta: false, agotado: false, img: 'gio2-wp.jpg', desc: 'Una interpretación más moderna y profunda del clásico de Armani. Tiene un toque más intenso con notas oceánicas y romero, lo que le da un carácter más decidido. Es refrescante pero con una duración notable.' },
-            { cat: 'perfumes', nombre: 'Kalan - Parfums de Marly', precio: 1400, precioOriginal: 1650, oferta: false, agotado: false, img: 'marlyrojo-wp.jpg', desc: 'Una fragancia con mucha personalidad para quienes buscan algo diferente. Combina la frescura de la naranja con un fondo especiado de pimienta negra. Es un aroma cálido y robusto que se adapta muy bien a climas frescos o eventos nocturnos.' },
-            { cat: 'perfumes', nombre: 'Lacoste L.12.12 Jaune', precio: 1299, precioOriginal: 1099, oferta: false, agotado: false, img: 'lacA-wp.jpg', desc: 'La definición de optimismo en una botella. Es una fragancia sumamente alegre y radiante, donde destaca la nota de toronja y manzana verde. Se siente muy fresca y ligera, perfecta para días soleados o después de hacer ejercicio. Es ese aroma sencillo pero efectivo que te hace sentir bien al instante.' },
-            { cat: 'perfumes', nombre: 'Silver Mountain Water - Creed', precio: 1499, precioOriginal: 1499, oferta: false, agotado: false, img: 'silvercreed-wp.jpg', desc: 'Una fragancia inspirada en la pureza y frescura de las montañas. Se siente como un aire frío y cristalino, gracias a su mezcla de té verde, grosellas negras y bergamota. Es un aroma muy limpio, relajante y elegante, ideal para quienes disfrutan de perfumes que transmiten serenidad y clase.' },
-// 
-            { cat: 'perfumes', nombre: 'Carolina Herrera 212 Men', precio: 1350, precioOriginal: 2600, oferta: false, agotado: false, img: '212men-wp.jpg', desc: 'El estándar de la frescura urbana con notas verdes, jengibre y un fondo varonil de sándalo. Ideal para proyectar limpieza y energía diaria.' },
-            { cat: 'perfumes', nombre: 'Mancera Red Tobacco', precio: 1299, precioOriginal: 3800, oferta: false, agotado: false, img: 'redtobacco-wp.jpg', desc: 'Una verdadera bestia en duración y proyección. Tabaco intenso, canela, vainilla y un toque de incienso. Un aroma oscuro, opulento y sumamente seductor. The ultimate winter fragance.' },
-            { cat: 'perfumes', nombre: 'Mancera Instant Crush', precio: 1299, precioOriginal: 3600, oferta: false, agotado: false, img: 'instantcrush-wp.jpg', desc: 'Un imán de cumplidos unisex. Notas de azafrán, jengibre y cítricos con un fondo dulce irresistible. Elegancia moderna en cada atomización.' },
-            { cat: 'perfumes', nombre: 'Mancera Intense Instant Crush', precio: 1399, precioOriginal: 4100, oferta: false, agotado: false, img: 'intensecrush-wp.jpg', desc: 'Versión Extrait de Parfum. Más profundidad, más duración y una estela que domina cualquier lugar. La joya de la corona de Mancera.' },
-            { cat: 'perfumes', nombre: 'Mancera Xplicit Vanilla', precio: 1299, precioOriginal: 3500, oferta: false, agotado: false, img: 'xplicit-wp.jpg', desc: 'Vainilla de lujo con toques florales y ambarados. Seducción pura, cálida y sofisticada. Ideal para quienes buscan un aroma dulce pero exclusivo.' },
-            { cat: 'perfumes', nombre: 'YSL MYSLF - Eau de Parfum', precio: 1350, precioOriginal: 3100, oferta: false, agotado: false, img: 'myslf-wp.jpg', desc: 'El lanzamiento más exitoso del año. Frescura cítrica de bergamota que seca en un aroma limpio de flor de azahar y maderas modernas. Sofisticación pura y moderna.' },
-            { cat: 'perfumes', nombre: 'YSL Y Eau de Parfum', precio: 1350, precioOriginal: 3300, oferta: false, agotado: false, img: 'yslyedp-wp.jpg', desc: 'El rey de los perfumes azules. Manzana, jengibre y salvia que proyectan seguridad y éxito. Súper potente y dura todo el día en piel. A must-have.' },
-            { cat: 'perfumes', nombre: 'Valentino Born in Roma Uomo Intense', precio: 1199, precioOriginal: 3400, oferta: false, agotado: false, img: 'valentinointense-wp.jpg', desc: 'Vainilla oscura, lavanda seductora y un toque ahumado. Es una fragancia nocturna, profunda y con un estilo rebelde pero de alta costura.' },
-            { cat: 'perfumes', nombre: 'CH Bad Boy Elixir', precio: 1250, precioOriginal: 3100, oferta: false, agotado: false, img: 'badboyelixir-wp.jpg', desc: 'Fuego puro. Cacao cálido, incienso y un toque de ciruela. Más oscuro y misterioso que el original, ideal para la noche y citas románticas.' },
-            { cat: 'perfumes', nombre: 'D&G Light Blue Eau Intense Pour Homme', precio: 1150, precioOriginal: 2600, oferta: false, agotado: false, img: 'lightblueintense-wp.jpg', desc: 'El rey indiscutible del calor. Toronja congelada, agua de mar y enebro. Un golpe de frescura salada que dura muchísimo más que los perfumes frescos promedio.' },
-            { cat: 'perfumes', nombre: 'Lattafa Asad', precio: 549, precioOriginal: 1200, oferta: false, agotado: false, img: 'asad-wp.jpg', desc: 'El dupe más famoso del mercado (inspirado en Sauvage Elixir). Vainilla, pimienta negra y maderas cálidas. Una bestia en duración y masculinidad. Outstanding value.' },
-            { cat: 'perfumes', nombre: 'Lattafa Asad Zanzibar', precio: 549, precioOriginal: 1300, oferta: false, agotado: false, img: 'asadzanzibar-wp.jpg', desc: 'El nuevo lanzamiento viral. Una mezcla tropical de coco, vainilla e iris. Cremoso, diferente y perfecto para destacar en cualquier lugar.' },
-            { cat: 'perfumes', nombre: 'Armaf Club de Nuit Milestone', precio: 850, precioOriginal: 1600, oferta: false, agotado: false, img: 'milestone-wp.jpg', desc: 'Un viaje al mar Mediterráneo. Notas frutales marinas, maderas suaves y almizcle. Totalmente unisex, salado y sumamente elegante.' },
+    async function cargarInventario() {
+        try {
+            console.log("Conectando al Búnker de Axtelix...");
+            const respuesta = await fetch('https://axtelix-backend.onrender.com/obtener-productos');
+            const datos = await respuesta.json();
 
-            ];
+            // 1. TRADUCTOR: Ajustado a los nombres reales de tu Supabase
+            INVENTARIO = datos.map(p => {
+                return {
+                    id: p.id,
+                    nombre: p.nombre,
+                    precio: p.precio, 
+                    precioOriginal: p.precio_original || p.precio, 
+                    img: p.img, 
+                    desc: p.desc_producto || "Sin descripción",
+                    cat: p.cat || "perfumes", // Usamos 'cat' que es como está en tu captura
+                    oferta: p.oferta || false,
+                    agotado: p.agotado || false
+                };
+            });
 
-        const TECNOLOGIA = [
-            { cat: 'tech', nombre: 'Iphone 17 Pro', precio: 14999, precioOriginal: 23499, oferta: true, agotado: false, img: 'iphone17-wp.jpeg', desc: 'El epicentro de tu productividad. Forjado en titanio de grado aeroespacial, el iPhone 17 Pro redefine la potencia con su chip de última generación. Sus 256GB te aseguran espacio de sobra para tus proyectos, contenido y aplicaciones de alto rendimiento. No es solo un smartphone, es el motor del Ecosistema Axtelix en la palma de tu mano. Potencia bruta con un diseño impecable.' },
-            { cat: 'tech', nombre: 'Airpods Pro 2G', precio: 899, precioOriginal: 1200, oferta: false, agotado: false, img: 'airpods-wp.jpeg', desc: 'Sumérgete en el enfoque total. Gracias a su cancelación activa de ruido líder en la industria, los AirPods Pro 2G te permiten aislarte del mundo para concentrarte en tus metas. Audio espacial personalizado y una autonomía mejorada para que tu música y tus llamadas tengan la claridad que tu ritmo de vida exige. El complemento indispensable para el profesional moderno.' },
-            { cat: 'tech', nombre: 'Cargador Inalámbrico MagSafe Pro', precio: 449, oferta: false, agotado: false, img: 'cargador-wp.png', desc: 'La energía que tu ecosistema necesita, sin fricciones. Diseñado para una alineación magnética perfecta, el MagSafe Pro ofrece una carga rápida y segura que optimiza la vida útil de tu batería. Su diseño minimalista y estético encaja perfectamente en cualquier escritorio de alto nivel. Mantén tu iPhone siempre listo para la acción con la eficiencia que solo Axtelix te garantiza.' }
-        ];
+            console.log("Inventario cargado exitosamente:", INVENTARIO);
+            renderizarProductos();
 
-        const CALZADO = [
-            { cat: 'shoes', nombre: 'Nike Dunk Low', precio: 1390, precioOriginal: 2549, oferta: true, agotado: false, img: 'nike-wp.jpeg', desc: 'Calidad Garantizada. Tallas 23-29 MX.' },
-            { cat: 'shoes', nombre: 'Nike Air Max 270 Black/White', precio: 1350, oferta: false, agotado: false, img: 'nikeairforce-wp.jpg', desc: 'Estilo y comodidad en cada paso. Los Nike Air Max 270 cuentan con la unidad Air más alta hasta la fecha. Ofreciendo una amortiguación ultra suave que se siente como caminar en el aire. Con un diseño inspirado en los iconos de Air Max. su parte superior de malla transpirable mantiene tus pies frescos. Ideales para el uso diario con un look deportivo y moderno.' },
-            { cat: 'shoes', nombre: 'Nike Air Force Premium Just Do It', precio: 1450, oferta: false, agotado: false, img: 'nikebn-wp.jpg', desc: 'Un icono que celebra la motivación. Esta edición especial de los Air Force 1 presenta el legendario lema Just Do It con un diseño de logotipos repetidos sobre el Swoosh. Fabricados con materiales sintéticos de alta calidad y la clásica cápsula de aire en la suela para una comodidad duradera. El equilibrio perfecto entre un estilo clásico y un mensaje audaz.' }
-        ];
-
-        const SOFTWARE = [
-            { cat: 'web', nombre: 'Paginas Web', precio: 14500, precioOriginal: 0, oferta: false, agotado: true, img: 'paginaweb-wp.jpg', desc: "🚀 ECOSISTEMA AUTOMATIZADO: No es solo una web, es un sistema que VENDE POR TI 24/7. Incluye Bot de WhatsApp inteligente, gestión directa desde Google Sheets y generador de tickets profesional. ¡Lleva tu negocio al siguiente nivel hoy mismo!"},
-            { cat: 'web', nombre: 'AXTELIX ERP | Standard Edition', precio: 1200, precioOriginal: 0, oferta: false, agotado: false, img: 'soft1-wp.png', desc: "¿Cansado de no saber cuánto ganas realmente al final del día? Deja de usar libretas o Excels complicados. Con AXTELIX ERP, profesionaliza tu negocio de Dropshipping o tienda física con una interfaz de última generación. ¿Qué incluye esta versión? 🛒 Punto de Venta (POS): Escanea códigos, suma productos y cierra ventas en segundos. 📦 Gestión de Inventario: Controla entradas, salidas y existencias reales (¡No más ventas sin stock!). 📊 Dashboard de Ganancias: Visualiza tu total acumulado con un solo clic. 🔒 Seguridad por Equipo: Licencia vinculada a tu hardware para proteger tu información. ⚡ Interfaz Dark Mode: Diseño fluido, rápido y moderno (CustomTkinter). Ideal para emprendedores que buscan rapidez y orden sin pagar mensualidades costosas."}
-        ];
-
-        const INVENTARIO = [...PERFUMERIA, ...TECNOLOGIA, ...CALZADO, ...SOFTWARE];
-
-        function renderizarProductos() {
-            const contenedores = {
-                perfumes: document.getElementById('container-perfumes'),
-                tech: document.getElementById('container-tech'),
-                shoes: document.getElementById('container-shoes'),
-                web: document.getElementById('container-web')
-            };
-
-            Object.values(contenedores).forEach(c => { if(c) c.innerHTML = ''; });
-
-            INVENTARIO.forEach(p => {
-    const esAgotado = p.agotado ? 'sold-out' : '';
-    const badgeAgotado = p.agotado ? `<div class="badge-agotado">SOLD OUT</div>` : '';
-    const badgeOferta = p.oferta && !p.agotado ? `<div class="badge-oferta">OFERTA 🔥</div>` : '';
-    
-    
-    // Si está agotado, el botón dirá "SIN STOCK"
-    const textoBoton = p.agotado ? "SIN STOCK" : "AÑADIR AL CARRITO";
-    const precioTachado = p.oferta ? `<span style="text-decoration: line-through; color: #888; font-size: 0.8rem; display: block;">$${p.precioOriginal}</span>` : '';
-
-    const html = `
-        <div class="product-card ${esAgotado}">
-            ${badgeOferta}
-            ${badgeAgotado}
-            <h3>${p.nombre}</h3>
-            <span class="price">${precioTachado} $${p.precio}</span>
-            <img src="${p.img}" onclick="showProductDetails('${p.nombre}', '${p.desc}')">
-            <button class="btn-details" onclick="showProductDetails('${p.nombre}', '${p.desc}')">Detalles</button>
-            <button class="btn-add-cart" onclick="addToCart('${p.nombre}', ${p.precio}, this)" ${p.agotado ? 'disabled' : ''}>
-                ${textoBoton}
-            </button>
-        </div>
-    `;
-    if (contenedores[p.cat]) contenedores[p.cat].innerHTML += html;
-    setTimeout(activarSensores, 500);
-});
+        } catch (error) {
+            console.error("❌ Error conectando con el backend:", error);
+            document.body.innerHTML += `<div style="position:fixed; top:0; background:red; color:white; width:100%; text-align:center; z-index:9999;">Error de conexión con el Búnker</div>`;
         }
+    }
+
+    function renderizarProductos() {
+        // 2. MAPEO: Vinculamos el nombre de la base de datos con el ID de tu HTML
+        const contenedores = {
+            'perfumes': document.getElementById('container-perfumes'),
+            'tech': document.getElementById('container-tech'),
+            'shoes': document.getElementById('container-shoes'),
+            'web': document.getElementById('container-web')
+        };
+
+        // Limpiar contenedores
+        Object.values(contenedores).forEach(c => { if(c) c.innerHTML = ''; });
+
+        INVENTARIO.forEach(p => {
+            // Validamos que 'cat' exista antes de usar toLowerCase() para evitar el error de la consola
+            const categoriaLimpia = (p.cat || "").toLowerCase().trim();
+            
+            const esAgotado = p.agotado ? 'sold-out' : '';
+            const badgeAgotado = p.agotado ? `<div class="badge-agotado">SOLD OUT</div>` : '';
+            const badgeOferta = p.oferta && !p.agotado ? `<div class="badge-oferta">OFERTA 🔥</div>` : '';
+            const textoBoton = p.agotado ? "SIN STOCK" : "AÑADIR AL CARRITO";
+            const precioTachado = p.oferta ? `<span style="text-decoration: line-through; color: #888; font-size: 0.8rem; display: block;">$${p.precioOriginal}</span>` : '';
+
+            const html = `
+                <div class="product-card ${esAgotado}">
+                    ${badgeOferta}
+                    ${badgeAgotado}
+                    <h3>${p.nombre}</h3>
+                    <span class="price">${precioTachado} $${p.precio}</span>
+                    <img src="${p.img}" alt="${p.nombre}" onclick="showProductDetails('${p.nombre}', '${p.desc}')">
+                    <button class="btn-details" onclick="showProductDetails('${p.nombre}', '${p.desc}')">Detalles</button>
+                    <button class="btn-add-cart" onclick="addToCart('${p.nombre}', ${p.precio}, this)" ${p.agotado ? 'disabled' : ''}>
+                        ${textoBoton}
+                    </button>
+                </div>
+            `;
+
+            // 3. Colocamos el producto en su lugar
+            const target = contenedores[categoriaLimpia];
+            if (target) {
+                target.innerHTML += html;
+            } else {
+                // Si la categoría no coincide, lo mandamos a perfumes por defecto para que no desaparezca
+                if(contenedores['perfumes']) contenedores['perfumes'].innerHTML += html;
+            }
+        });
+
+        if (typeof activarSensores === 'function') setTimeout(activarSensores, 500);
+    }
+
+    document.addEventListener('DOMContentLoaded', cargarInventario);
 
         // --- ANIMACIÓN DE LA LUPA ---
         function animarLupa() {
